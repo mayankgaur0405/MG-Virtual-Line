@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MG Virtual Line - History</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="data:," />
+  <style>.card{box-shadow:0 2px 12px rgba(0,0,0,.08)}</style>
+  <script>
+    function formatDate(d){ try{ const dt=new Date(d); if(isNaN(dt)) return '-'; return dt.toLocaleString(); }catch(_){ return '-'; } }
+  </script>
+  <script>
+    // lightweight day picker using native inputs
+  </script>
+</head>
+<body class="bg-slate-900 text-slate-100">
+  <div class="max-w-5xl mx-auto p-4 space-y-4">
+    <header class="flex items-center justify-between py-4">
+      <div>
+        <h1 class="text-xl font-bold">MG Virtual Line</h1>
+        <p id="roleLabel" class="text-xs text-slate-400">History</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/user.html" id="backUser" class="text-sm text-slate-300 hover:text-white hidden">User</a>
+        <a href="/admin.html" id="backAdmin" class="text-sm text-slate-300 hover:text-white hidden">Admin</a>
+        <span id="meEmail" class="text-xs text-slate-400"></span>
+      </div>
+    </header>
+
+    <section class="card bg-slate-800 border border-slate-700 rounded-lg p-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+        <div>
+          <label class="block text-xs text-slate-400">Start Date</label>
+          <input id="startDate" type="date" class="w-full border border-slate-700 bg-slate-900 rounded px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400">End Date</label>
+          <input id="endDate" type="date" class="w-full border border-slate-700 bg-slate-900 rounded px-3 py-2" />
+        </div>
+        <div class="md:col-span-2 flex gap-2">
+          <button id="applyFilter" class="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500 text-white">Apply</button>
+          <button id="clearFilter" class="px-4 py-2 rounded bg-slate-700 hover:bg-slate-600 text-white">Clear</button>
+        </div>
+      </div>
+      <div class="mt-4 overflow-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-slate-400 border-b border-slate-700">
+              <th class="py-2 pr-3">Shop</th>
+              <th class="py-2 pr-3">Token</th>
+              <th class="py-2 pr-3">Created</th>
+              <th class="py-2 pr-3">Completed</th>
+              <th class="py-2 pr-3">Status</th>
+              <th class="py-2 pr-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div id="empty" class="text-slate-400 text-sm py-6 hidden">No records.</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    async function apiJson(url, options = {}) {
+      const res = await fetch(url, options);
+      const text = await res.text();
+      try { const data = JSON.parse(text); if (!res.ok) throw new Error(data.error || res.statusText); return data; } catch (e) { throw new Error(text); }
+    }
+
+    let me = null;
+    (async () => {
+      me = await apiJson('/auth/me');
+      if (!me.user) { location.href = '/'; return; }
+      $('meEmail').textContent = me.user.email || '';
+      $('roleLabel').textContent = `History · ${me.user.role}`;
+      if (me.user.role === 'admin') $('backAdmin').classList.remove('hidden'); else $('backUser').classList.remove('hidden');
+      await load();
+    })();
+
+    async function load() {
+      const params = new URLSearchParams();
+      const s = $('startDate').value; const e = $('endDate').value;
+      if (s) params.set('start', s);
+      if (e) params.set('end', e);
+      const data = await apiJson(`/history/list${params.toString() ? ('?' + params.toString()) : ''}`);
+      render(data.records || []);
+    }
+
+    function render(records){
+      const tbody = $('rows'); tbody.innerHTML = '';
+      if (!records.length) { $('empty').classList.remove('hidden'); return; } else $('empty').classList.add('hidden');
+      for (const r of records) {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-slate-800 hover:bg-slate-800/40';
+        const created = formatDate(r.createdAt);
+        const completed = r.completedAt ? formatDate(r.completedAt) : '-';
+        const statusBadge = r.status === 'Completed' ? 'bg-emerald-600' : 'bg-amber-600';
+        const canConfirm = r.status !== 'Completed' && ((me.user.role === 'admin' && !r.adminConfirmed) || (me.user.role === 'user' && !r.userConfirmed));
+        tr.innerHTML = `
+          <td class="py-2 pr-3">${r.vendorName || r.vendorCode || '-'}</td>
+          <td class="py-2 pr-3">#${r.tokenNumber || r.tokenId?.number || '-'}</td>
+          <td class="py-2 pr-3">${created}</td>
+          <td class="py-2 pr-3">${completed}</td>
+          <td class="py-2 pr-3"><span class="px-2 py-1 rounded text-xs ${statusBadge}">${r.status}</span></td>
+          <td class="py-2 pr-3 flex gap-2 items-center">${canConfirm ? `<button data-id="${r.tokenId}" class="confirm px-3 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white text-xs">Confirm</button>` : ''}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+      // wire confirm buttons
+      tbody.querySelectorAll('button.confirm').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const tokenId = btn.getAttribute('data-id');
+          try {
+            await apiJson('/history/confirm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tokenId }) });
+            await load();
+          } catch (e) { alert(e.message); }
+        });
+      });
+      // history editing disabled
+    }
+
+    $('applyFilter').addEventListener('click', load);
+    $('clearFilter').addEventListener('click', () => { $('startDate').value=''; $('endDate').value=''; load(); });
+  </script>
+</body>
+</html>
+
+

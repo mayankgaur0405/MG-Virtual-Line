@@ -18,6 +18,7 @@
         <p class="text-xs text-slate-400">User</p>
       </div>
       <div class="flex items-center gap-3">
+        <a href="/history.html" class="text-sm text-slate-300 hover:text-white">History</a>
         <span id="meEmail" class="text-xs text-slate-400"></span>
         <button id="logoutBtn" class="text-sm text-slate-300 hover:text-white">Logout</button>
       </div>
@@ -55,6 +56,7 @@
             <div id="eta" class="text-2xl font-bold">-</div>
           </div>
         </div>
+        
       </div>
     </section>
 
@@ -69,6 +71,12 @@
       </div>
     </section>
     </div>
+
+    <!-- Multi-shop cards -->
+    <section class="card bg-slate-800 border border-slate-700 rounded-lg p-4">
+      <div class="flex items-center justify-between mb-2"><h3 class="font-semibold">Your Shops</h3><button id="refreshShops" class="text-xs px-2 py-1 rounded border border-slate-600 text-slate-300 hover:bg-slate-800">Refresh</button></div>
+      <div id="shopCards" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+    </section>
 
     <!-- QR Scanner Modal -->
     <div id="qrModal" class="fixed inset-0 bg-slate-900/80 hidden items-center justify-center p-4">
@@ -231,26 +239,81 @@
       localStorage.setItem('user_token_number', String(myTokenNumber));
       localStorage.setItem('user_token_id', data.token._id || '');
       localStorage.setItem('user_note', note || '');
+      loadMyShops();
     });
 
     socket.on('vendor_update', (payload) => {
-      if (!joinedVendor || payload.vendorCode !== joinedVendor) return;
-      $('currentServing').textContent = payload.currentServing || '-';
-      $('eta').textContent = estWait(payload.currentServing, myTokenNumber);
-      if (myTokenNumber) {
-        if (payload.currentServing === myTokenNumber) {
-          const title = 'Now Serving';
-          const body = `Your token ${myTokenNumber} is now being served.`;
-          addNotifCard(title, body);
-          notify(title, body);
-        } else if (payload.nextWaiting === myTokenNumber) {
-          const title = 'Next in Queue';
-          const body = `Your token ${myTokenNumber} is next in queue.`;
-          addNotifCard(title, body);
-          notify(title, body);
+      if (!joinedVendor || payload.vendorCode === joinedVendor) {
+        $('currentServing').textContent = payload.currentServing || '-';
+        $('eta').textContent = estWait(payload.currentServing, myTokenNumber);
+        if (myTokenNumber) {
+          if (payload.currentServing === myTokenNumber) {
+            const title = 'Now Serving';
+            const body = `Your token ${myTokenNumber} is now being served.`;
+            addNotifCard(title, body);
+            notify(title, body);
+          } else if (payload.nextWaiting === myTokenNumber) {
+            const title = 'Next in Queue';
+            const body = `Your token ${myTokenNumber} is next in queue.`;
+            addNotifCard(title, body);
+            notify(title, body);
+          }
         }
       }
+      loadMyShops();
     });
+
+    // Multi-shop: render cards and notifications per vendor
+    async function loadMyShops() {
+      try {
+        const [mineAll, hist] = await Promise.all([
+          apiJson('/token/mineAll'),
+          apiJson('/history/list')
+        ]);
+        const container = $('shopCards');
+        container.innerHTML = '';
+        let items = mineAll.items || [];
+        if (!items.length) { container.innerHTML = '<div class="text-slate-400">No shops yet.</div>'; return; }
+        const historyByTokenId = new Map((hist.records || []).map(r => [String(r.tokenId), r]));
+        // Filter out completed tokens so cards only show active/created ones
+        items = items.filter(it => {
+          const rec = it.token?._id ? historyByTokenId.get(String(it.token._id)) : null;
+          return !(rec && rec.status === 'Completed');
+        });
+        if (!items.length) { container.innerHTML = '<div class="text-slate-400">No active shops. Completed tokens are in History.</div>'; return; }
+        for (const it of items) {
+          // join socket room for live updates
+          socket.emit('join_vendor', it.vendorCode);
+          const rec = it.token?._id ? historyByTokenId.get(String(it.token._id)) : null;
+          const statusLabel = rec?.status ? rec.status : (it.token?.status === 'waiting' ? 'Pending' : (it.token?.status === 'served' ? 'Created' : (it.token?.status || '-')));
+          const badge = statusLabel==='Created'?'bg-amber-600':(statusLabel==='Pending'?'bg-slate-600':'bg-emerald-600');
+          const canUserConfirm = !!rec && rec.status !== 'Completed' && !rec.userConfirmed;
+          const card = document.createElement('div');
+          card.className = 'rounded border border-slate-700 p-3 bg-slate-900';
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div class="font-medium">${it.vendorName || it.vendorCode}</div>
+              <div class="text-xs text-slate-400">#${it.token?.number ?? '-'}</div>
+            </div>
+            <div class="text-sm mt-1">Status: <span class="px-2 py-0.5 rounded text-xs ${badge}">${statusLabel}</span></div>
+            <div class="mt-2">
+              ${canUserConfirm ? `<button class=\"shop-confirm text-xs px-2 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white\" data-id=\"${it.token?._id || ''}\">Confirm</button>` : ''}
+            </div>
+          `;
+          container.appendChild(card);
+          const btn = card.querySelector('button.shop-confirm');
+          if (btn && it.token?._id) {
+            btn.addEventListener('click', async () => {
+              try {
+                await apiJson('/history/confirm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tokenId: it.token._id }) });
+                await loadMyShops();
+              } catch (e) { alert('Confirm failed'); }
+            });
+          }
+        }
+      } catch (_) {}
+    }
+    $('refreshShops').addEventListener('click', loadMyShops);
 
     async function refreshVendorStatus(vendorCode) {
       try {
@@ -262,6 +325,8 @@
         }
       } catch (_) {}
     }
+
+    
 
     // QR scan
     function parseVendorFromString(s) {
