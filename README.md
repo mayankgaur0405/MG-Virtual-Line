@@ -1,134 +1,63 @@
-MG Virtual Line (MERN, Lightweight)
+# MG Virtual Line 🚀
 
-A minimal, fast virtual queue MVP. Users scan a QR at a shop/office to join the queue. Admins create vendors, display a QR, and advance the queue. Real-time updates are powered by Socket.io.
+**Author:** Mayank Gaur
 
-Tech Stack
+A **first-of-its-kind virtual queue system**: users scan a QR to get a token, admins manage queues in real-time. Simple, fast, beginner-friendly.
 
-Backend: Node.js + Express
+---
 
-Database: MongoDB (Mongoose)
+### 🎯 Objective
 
-Real-time: Socket.io
+> * Replace physical queues with **digital tokens**
+> * Real-time updates: current serving, next token, ETA
+> * Easy for **non-technical users**
 
-Frontend: SPA with Tailwind CDN (no build step)
+---
 
-QR Scanning: jsQR for client-side scanning
+### 🟦 User Card
 
-Authentication: JWT (roles: admin, user)
+> * Scan QR → auto-fill vendor
+> * Add optional note → get token
+> * Live view: **Your Token**, **Current Serving**, **ETA**
 
-Features
-User
+---
 
-Scan QR → auto-fill vendor → add optional note → get token
+### 🟩 Admin Card
 
-Live view: shows Your Token, Current Serving, Estimated Wait
+> * Create vendor → display QR
+> * Dashboard → list tokens & statuses
+> * Advance queue → **Next Token** → real-time updates
 
-Admin
+---
 
-Signup/Login → create vendor → display QR
+### 💻 Tech Card
 
-Dashboard: list tokens with statuses
+> Node.js + Express | MongoDB | Socket.io | Tailwind SPA | jsQR | JWT
 
-Advance queue with Next Token
+---
 
-Real-time updates to all connected clients per vendor
+### ⚡ Quick Start Card
 
-Quick Start
-Requirements
+> ```bash
+> npm install
+> # Configure .env
+> npm start
+> ```
+>
+> Open `http://localhost:3000`
 
-Node 18+
+---
 
-MongoDB running locally or a connection URL
+### 🔧 Notes Card
 
-Install
-npm install
+> * MVP: simplest queue only
+> * Keep `JWT_SECRET` & `MONGO_URI` stable
+> * Camera permission needed for QR scanning
 
-Configure .env
-PORT=3000
-MONGO_URI=mongodb://127.0.0.1:27017/mg_virtual_line
-JWT_SECRET=replace_with_a_long_random_secret
+---
 
-Run
-npm start       # Production
-npm run dev     # Development (with nodemon)
+### 📝 License
 
+> MIT
 
-Open http://localhost:3000.
-
-Usage
-Admin Flow
-
-Signup with role Admin
-
-Create a vendor (enter shop/office name)
-
-Show the generated QR code at your counter
-
-Use Next Token to advance the queue; users get live updates
-
-User Flow
-
-Tap Scan QR in the app
-
-vendor code auto-fills; add optional note/request
-
-Tap Get Token and watch live status/ETA
-
-API (MVP)
-
-POST /auth/signup → { email, password, role: 'user'|'admin' }
-
-POST /auth/login → { email, password }
-
-POST /vendor/create (Admin only, Bearer token) → create vendor + QR
-
-POST /token/create → issue next token for vendor
-
-GET /token/list?vendorCode=ABC123 → list tokens + vendor info
-
-POST /token/next (Admin only, Bearer token) → serve next token
-
-All responses are JSON. Admin endpoints require:
-
-Authorization: Bearer <jwt>
-
-Real-time Updates
-
-Clients join a Socket.io room per vendor (vendor:<vendorCode>).
-
-Server emits vendor_update:
-
-{
-  "vendorCode": "ABC123",
-  "currentServing": 5,
-  "lastIssued": 12,
-  "nextWaiting": 6
-}
-
-Project Structure
-root/
-  public/
-    index.html   # SPA, Tailwind, Socket.io client, QR scanner
-  server.js      # Express, Mongoose, Socket.io, routes
-  package.json
-  README.md
-
-Notes
-
-MVP: no menu/service selection; simplest queue only
-
-Keep JWT_SECRET stable across restarts for valid sessions
-
-Use a stable MONGO_URI to persist data
-
-Troubleshooting
-
-JSON parse error with <!doctype ...>: your request hit the SPA instead of the API. Hard refresh (Ctrl+F5).
-
-Port in use: change PORT in .env or stop the existing server.
-
-Camera permissions: required for QR scanning on user devices.
-
-License
-
-MIT
+---
