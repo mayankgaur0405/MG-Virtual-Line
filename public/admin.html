@@ -132,13 +132,15 @@
       const res = await fetch('/token/next', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ vendorCode }) });
       const data = await res.json();
       if (data.error) return alert(data.error);
+      const msg = `Token ${data.served ?? ''} completed. ${data.vendor?.currentServing ? `Now serving ${data.vendor.currentServing}.` : ''}`.trim();
+      if (msg) console.log(msg);
       refreshTokenList(vendorCode);
     });
 
     $('clearBtn').addEventListener('click', async () => {
       const vendorCode = $('vendorCodeLabel').textContent.trim();
       if (!vendorCode) return;
-      if (!confirm('Clear all tokens for this shop?')) return;
+      if (!confirm('Clear Queue: delete all tokens and reset counters?')) return;
       const res = await fetch('/vendor/clear', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ vendorCode }) });
       const data = await res.json();
       if (data.error) return alert(data.error);
@@ -148,7 +150,7 @@
     $('deleteBtn').addEventListener('click', async () => {
       const vendorCode = $('vendorCodeLabel').textContent.trim();
       if (!vendorCode) return;
-      if (!confirm('Delete shop and all its data?')) return;
+      if (!confirm('Delete Shop: remove vendor and all tokens?')) return;
       const res = await fetch('/vendor/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ vendorCode }) });
       const data = await res.json();
       if (data.error) return alert(data.error);
