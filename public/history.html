@@ -2,11 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
   <title>MG Virtual Line - History</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" href="data:," />
-  <style>.card{box-shadow:0 2px 12px rgba(0,0,0,.08)}</style>
+  <style>
+    .card{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .max-w-5xl { max-width: 100%; }
+      .p-4 { padding: 1rem; }
+      .gap-3 { gap: 0.75rem; }
+      .text-xl { font-size: 1.125rem; }
+      .py-2 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+      .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+    }
+    /* Prevent zoom on input focus */
+    input, select, textarea { font-size: 16px; }
+  </style>
   <script>
     function formatDate(d){ try{ const dt=new Date(d); if(isNaN(dt)) return '-'; return dt.toLocaleString(); }catch(_){ return '-'; } }
   </script>
@@ -24,12 +37,28 @@
       <div class="flex items-center gap-3">
         <a href="/user.html" id="backUser" class="text-sm text-slate-300 hover:text-white hidden">User</a>
         <a href="/admin.html" id="backAdmin" class="text-sm text-slate-300 hover:text-white hidden">Admin</a>
-        <span id="meEmail" class="text-xs text-slate-400"></span>
+        <!-- Profile icon -->
+        <div class="relative">
+          <button id="profileBtn" class="w-8 h-8 rounded-full bg-indigo-600 hover:bg-indigo-500 flex items-center justify-center text-white text-sm font-medium">
+            <span id="profileInitial">U</span>
+          </button>
+          <!-- Profile dropdown -->
+          <div id="profileDropdown" class="absolute right-0 top-full mt-2 w-64 bg-slate-800 border border-slate-700 rounded-lg shadow-lg hidden z-50">
+            <div class="p-3 border-b border-slate-700">
+              <div class="text-sm font-medium" id="profileEmail"></div>
+              <div class="text-xs text-slate-400">User Account</div>
+            </div>
+            <div class="p-2">
+              <button id="editProfileBtn" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 rounded">Edit Profile</button>
+              <button id="logoutBtn" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 rounded">Logout</button>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
 
     <section class="card bg-slate-800 border border-slate-700 rounded-lg p-4">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
         <div>
           <label class="block text-xs text-slate-400">Start Date</label>
           <input id="startDate" type="date" class="w-full border border-slate-700 bg-slate-900 rounded px-3 py-2" />
@@ -37,6 +66,12 @@
         <div>
           <label class="block text-xs text-slate-400">End Date</label>
           <input id="endDate" type="date" class="w-full border border-slate-700 bg-slate-900 rounded px-3 py-2" />
+        </div>
+        <div id="vendorFilterSection" class="hidden">
+          <label class="block text-xs text-slate-400">Vendor</label>
+          <select id="vendorFilter" class="w-full border border-slate-700 bg-slate-900 rounded px-3 py-2">
+            <option value="">All Vendors</option>
+          </select>
         </div>
         <div class="md:col-span-2 flex gap-2">
           <button id="applyFilter" class="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-500 text-white">Apply</button>
@@ -62,6 +97,37 @@
     </section>
   </div>
 
+  <!-- Profile Edit Modal -->
+  <div id="profileModal" class="fixed inset-0 bg-slate-900/80 hidden items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 rounded-lg w-full max-w-sm p-4 space-y-3 text-slate-100">
+      <div class="flex items-center justify-between">
+        <h3 class="font-semibold">Edit Profile</h3>
+        <button id="profileCloseBtn" class="text-slate-400 hover:text-slate-200">Close</button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1">Name</label>
+          <input id="profileName" class="w-full border border-slate-700 bg-slate-900 rounded px-3 py-2" placeholder="Your name" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1">Email</label>
+          <input id="profileEmailInput" type="email" class="w-full border border-slate-700 bg-slate-900 rounded px-3 py-2" placeholder="your@email.com" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1">Phone (Optional)</label>
+          <input id="profilePhone" class="w-full border border-slate-700 bg-slate-900 rounded px-3 py-2" placeholder="+1234567890" />
+        </div>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button id="saveProfileBtn" class="flex-1 py-2 rounded bg-indigo-600 hover:bg-indigo-500 text-white">Save</button>
+        <button id="cancelProfileBtn" class="flex-1 py-2 rounded bg-slate-700 hover:bg-slate-600 text-white">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-4 right-4 hidden max-w-xs bg-slate-800 border border-slate-700 text-slate-100 text-sm rounded px-3 py-2 shadow"></div>
+
   <script>
     const $ = (id) => document.getElementById(id);
     async function apiJson(url, options = {}) {
@@ -71,20 +137,161 @@
     }
 
     let me = null;
+    let currentUser = null;
+
+    function toast(message) {
+      const el = document.getElementById('toast');
+      el.textContent = message;
+      el.classList.remove('hidden');
+      clearTimeout(el.__t);
+      el.__t = setTimeout(() => el.classList.add('hidden'), 4000);
+    }
+
     (async () => {
       me = await apiJson('/auth/me');
       if (!me.user) { location.href = '/'; return; }
-      $('meEmail').textContent = me.user.email || '';
+      
+      currentUser = me.user;
+      
+      // Update profile display
+      $('profileEmail').textContent = me.user.email || '';
+      $('profileInitial').textContent = (me.user.name || me.user.email || 'U').charAt(0).toUpperCase();
+      
+      // Update profile button color based on role
+      const profileBtn = $('profileBtn');
+      if (me.user.role === 'admin') {
+        profileBtn.className = 'w-8 h-8 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center text-white text-sm font-medium';
+        $('profileDropdown').querySelector('.text-xs').textContent = 'Admin Account';
+      }
+      
       $('roleLabel').textContent = `History · ${me.user.role}`;
-      if (me.user.role === 'admin') $('backAdmin').classList.remove('hidden'); else $('backUser').classList.remove('hidden');
+      if (me.user.role === 'admin') {
+        $('backAdmin').classList.remove('hidden');
+        $('vendorFilterSection').classList.remove('hidden');
+        await loadVendorList();
+      } else {
+        $('backUser').classList.remove('hidden');
+      }
       await load();
+      
+      // Profile event handlers
+      $('profileBtn').addEventListener('click', () => {
+        const dropdown = $('profileDropdown');
+        dropdown.classList.toggle('hidden');
+      });
+
+      $('editProfileBtn').addEventListener('click', () => {
+        // Populate profile modal with current data
+        $('profileName').value = currentUser.name || '';
+        $('profileEmailInput').value = currentUser.email || '';
+        $('profilePhone').value = currentUser.phone || '';
+        
+        // Show modal
+        $('profileModal').classList.remove('hidden');
+        $('profileModal').classList.add('flex');
+        
+        // Close dropdown
+        $('profileDropdown').classList.add('hidden');
+      });
+
+      $('saveProfileBtn').addEventListener('click', async () => {
+        const name = $('profileName').value.trim();
+        const email = $('profileEmailInput').value.trim();
+        const phone = $('profilePhone').value.trim();
+        
+        if (!email) {
+          toast('Email is required');
+          return;
+        }
+        
+        try {
+          const response = await fetch('/auth/updateProfile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, phone })
+          });
+          
+          if (response.ok) {
+            // Update local user data
+            currentUser.name = name;
+            currentUser.email = email;
+            currentUser.phone = phone;
+            
+            // Update display
+            $('profileEmail').textContent = email;
+            $('profileInitial').textContent = (name || email).charAt(0).toUpperCase();
+            
+            // Close modal
+            $('profileModal').classList.add('hidden');
+            $('profileModal').classList.remove('flex');
+            
+            toast('Profile updated successfully');
+          } else {
+            const data = await response.json();
+            toast(data.error || 'Failed to update profile');
+          }
+        } catch (e) {
+          toast('Failed to update profile');
+        }
+      });
+
+      $('cancelProfileBtn').addEventListener('click', () => {
+        $('profileModal').classList.add('hidden');
+        $('profileModal').classList.remove('flex');
+      });
+
+      $('profileCloseBtn').addEventListener('click', () => {
+        $('profileModal').classList.add('hidden');
+        $('profileModal').classList.remove('flex');
+      });
+
+      $('logoutBtn').addEventListener('click', async () => { 
+        await fetch('/auth/logout', { method: 'POST' }); 
+        location.href = '/'; 
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#profileBtn') && !e.target.closest('#profileDropdown')) {
+          $('profileDropdown').classList.add('hidden');
+        }
+      });
     })();
+
+    async function loadVendorList() {
+      try {
+        const data = await apiJson('/vendor/listMine');
+        const select = $('vendorFilter');
+        select.innerHTML = '<option value="">All Vendors</option>' + (data.vendors||[]).map(v => `<option value="${v.vendorCode}">${v.name} (${v.vendorCode})</option>`).join('');
+        
+        // Set current vendor if available
+        const selectedVendor = localStorage.getItem('admin_vendor_code');
+        if (selectedVendor) {
+          select.value = selectedVendor;
+        }
+      } catch (e) {
+        console.error('Failed to load vendor list:', e);
+      }
+    }
 
     async function load() {
       const params = new URLSearchParams();
       const s = $('startDate').value; const e = $('endDate').value;
       if (s) params.set('start', s);
       if (e) params.set('end', e);
+      
+      // Add vendor filtering
+      const vendorFilter = $('vendorFilter');
+      if (vendorFilter && vendorFilter.value) {
+        params.set('vendorCode', vendorFilter.value);
+      } else if (me.user.role === 'admin') {
+        // Fallback to localStorage if no vendor filter selected
+        const selectedVendor = localStorage.getItem('admin_vendor_code');
+        if (selectedVendor) {
+          params.set('vendorCode', selectedVendor);
+        }
+      }
+      
       const data = await apiJson(`/history/list${params.toString() ? ('?' + params.toString()) : ''}`);
       render(data.records || []);
     }
@@ -123,7 +330,17 @@
     }
 
     $('applyFilter').addEventListener('click', load);
-    $('clearFilter').addEventListener('click', () => { $('startDate').value=''; $('endDate').value=''; load(); });
+    $('clearFilter').addEventListener('click', () => { 
+      $('startDate').value=''; 
+      $('endDate').value=''; 
+      const vendorFilter = $('vendorFilter');
+      if (vendorFilter) vendorFilter.value = '';
+      load(); 
+    });
+    
+    // Auto-reload when vendor filter changes
+    $('vendorFilter').addEventListener('change', load);
+
   </script>
 </body>
 </html>

@@ -2,13 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
   <title>MG Virtual Line - User</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
   <link rel="icon" href="data:," />
-  <style>.card{box-shadow:0 2px 12px rgba(0,0,0,.08)}</style>
+  <style>
+    .card{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .max-w-5xl { max-width: 100%; }
+      .p-4 { padding: 1rem; }
+      .gap-6 { gap: 1rem; }
+      .text-xl { font-size: 1.125rem; }
+      .text-2xl { font-size: 1.5rem; }
+      .text-3xl { font-size: 1.875rem; }
+      .py-3 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+      .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+    }
+    /* Prevent zoom on input focus */
+    input, select, textarea { font-size: 16px; }
+  </style>
 </head>
 <body class="bg-slate-900 text-slate-100">
   <div class="max-w-5xl mx-auto p-4 space-y-4">
@@ -19,8 +34,23 @@
       </div>
       <div class="flex items-center gap-3">
         <a href="/history.html" class="text-sm text-slate-300 hover:text-white">History</a>
-        <span id="meEmail" class="text-xs text-slate-400"></span>
-        <button id="logoutBtn" class="text-sm text-slate-300 hover:text-white">Logout</button>
+        <!-- Profile icon -->
+        <div class="relative">
+          <button id="profileBtn" class="w-8 h-8 rounded-full bg-indigo-600 hover:bg-indigo-500 flex items-center justify-center text-white text-sm font-medium">
+            <span id="profileInitial">U</span>
+          </button>
+          <!-- Profile dropdown -->
+          <div id="profileDropdown" class="absolute right-0 top-full mt-2 w-64 bg-slate-800 border border-slate-700 rounded-lg shadow-lg hidden z-50">
+            <div class="p-3 border-b border-slate-700">
+              <div class="text-sm font-medium" id="profileEmail"></div>
+              <div class="text-xs text-slate-400">User Account</div>
+            </div>
+            <div class="p-2">
+              <button id="editProfileBtn" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 rounded">Edit Profile</button>
+              <button id="logoutBtn" class="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 rounded">Logout</button>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -56,7 +86,6 @@
             <div id="eta" class="text-2xl font-bold">-</div>
           </div>
         </div>
-        
       </div>
     </section>
 
@@ -74,7 +103,10 @@
 
     <!-- Multi-shop cards -->
     <section class="card bg-slate-800 border border-slate-700 rounded-lg p-4">
-      <div class="flex items-center justify-between mb-2"><h3 class="font-semibold">Your Shops</h3><button id="refreshShops" class="text-xs px-2 py-1 rounded border border-slate-600 text-slate-300 hover:bg-slate-800">Refresh</button></div>
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-semibold">Your Shops</h3>
+        <div class="text-xs text-slate-400">Auto-updating</div>
+      </div>
       <div id="shopCards" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
     </section>
 
@@ -87,6 +119,34 @@
         </div>
         <video id="qrVideo" class="w-full rounded border border-slate-700 bg-slate-950" playsinline></video>
         <p class="text-xs text-slate-400">Point your camera at the shop/office QR.</p>
+      </div>
+    </div>
+
+    <!-- Profile Edit Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-slate-900/80 hidden items-center justify-center p-4">
+      <div class="bg-slate-800 border border-slate-700 rounded-lg w-full max-w-sm p-4 space-y-3 text-slate-100">
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold">Edit Profile</h3>
+          <button id="profileCloseBtn" class="text-slate-400 hover:text-slate-200">Close</button>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Name</label>
+            <input id="profileName" class="w-full border border-slate-700 bg-slate-900 rounded px-3 py-2" placeholder="Your name" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Email</label>
+            <input id="profileEmailInput" type="email" class="w-full border border-slate-700 bg-slate-900 rounded px-3 py-2" placeholder="your@email.com" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-1">Phone (Optional)</label>
+            <input id="profilePhone" class="w-full border border-slate-700 bg-slate-900 rounded px-3 py-2" placeholder="+1234567890" />
+          </div>
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button id="saveProfileBtn" class="flex-1 py-2 rounded bg-indigo-600 hover:bg-indigo-500 text-white">Save</button>
+          <button id="cancelProfileBtn" class="flex-1 py-2 rounded bg-slate-700 hover:bg-slate-600 text-white">Cancel</button>
+        </div>
       </div>
     </div>
   </div>
@@ -107,11 +167,20 @@
       try { const data = JSON.parse(text); if (!res.ok) throw new Error(data.error || res.statusText); return data; } catch (e) { throw new Error(text); }
     }
 
+    // Global user data
+    let currentUser = null;
+
     (async () => {
       const me = await apiJson('/auth/me');
       if (!me.user) { location.href = '/'; return; }
       if (me.user.role === 'admin') { location.href = '/admin.html'; return; }
-      document.getElementById('meEmail').textContent = me.user.email || '';
+      
+      currentUser = me.user;
+      
+      // Update profile display
+      $('profileEmail').textContent = me.user.email || '';
+      $('profileInitial').textContent = (me.user.name || me.user.email || 'U').charAt(0).toUpperCase();
+      
       // Prefer server latest token for this user/vendor if provided via URL or storage
       let vendor = vendorFromUrl || localStorage.getItem('user_vendor_code');
       if (vendor) {
@@ -163,6 +232,11 @@
         }
         if (savedNote) $('noteInput').value = savedNote;
       }
+      
+      // Load initial shops and notifications, start auto-refresh
+      loadMyShops();
+      loadNotifications();
+      setInterval(loadMyShops, 5000); // Auto-refresh every 5 seconds
     })();
 
     const socket = io();
@@ -172,17 +246,78 @@
     let qrAnimating = false;
 
     // Notifications
-    function addNotifCard(title, body) {
+    function addNotifCard(title, body, persistent = true, tokenId = null, tokenNumber = null, vendorCode = null) {
       const list = document.getElementById('notifList');
       const ts = new Date();
       const time = ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const notification = {
+        id: Date.now() + Math.random(),
+        title,
+        body,
+        time: ts.toISOString(),
+        persistent,
+        tokenId,
+        tokenNumber,
+        vendorCode
+      };
+      
+      // Add to localStorage if persistent
+      if (persistent) {
+        const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+        notifications.unshift(notification);
+        // Keep only last 50 notifications
+        if (notifications.length > 50) {
+          notifications.splice(50);
+        }
+        localStorage.setItem('notifications', JSON.stringify(notifications));
+      }
+      
+      // Add to UI
       const card = document.createElement('div');
       card.className = 'rounded border border-slate-700 p-2 bg-slate-900';
+      card.setAttribute('data-notif-id', notification.id);
       card.innerHTML = `<div class="flex items-center justify-between"><div class="font-medium">${title}</div><div class="text-xs text-slate-400">${time}</div></div><div class="text-slate-300 text-sm mt-1">${body}</div>`;
       if (list.firstElementChild && list.firstElementChild.classList.contains('text-slate-400')) {
         list.innerHTML = '';
       }
       list.prepend(card);
+    }
+    
+    function loadNotifications() {
+      const list = document.getElementById('notifList');
+      const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+      
+      if (notifications.length === 0) {
+        list.innerHTML = '<div class="text-slate-400">No notifications yet.</div>';
+        return;
+      }
+      
+      list.innerHTML = '';
+      notifications.forEach(notif => {
+        const time = new Date(notif.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const card = document.createElement('div');
+        card.className = 'rounded border border-slate-700 p-2 bg-slate-900';
+        card.setAttribute('data-notif-id', notif.id);
+        card.innerHTML = `<div class="flex items-center justify-between"><div class="font-medium">${notif.title}</div><div class="text-xs text-slate-400">${time}</div></div><div class="text-slate-300 text-sm mt-1">${notif.body}</div>`;
+        list.appendChild(card);
+      });
+    }
+    
+    function clearCompletedNotifications() {
+      const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+      const filtered = notifications.filter(notif => 
+        !notif.body.includes('has been confirmed') && 
+        !notif.body.includes('is now being served')
+      );
+      localStorage.setItem('notifications', JSON.stringify(filtered));
+      loadNotifications();
+    }
+    
+    function clearNotificationsForToken(tokenId) {
+      const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+      const filtered = notifications.filter(notif => notif.tokenId !== tokenId);
+      localStorage.setItem('notifications', JSON.stringify(filtered));
+      loadNotifications();
     }
     function toast(message) {
       const el = document.getElementById('toast');
@@ -234,6 +369,11 @@
       $('yourToken').textContent = myTokenNumber;
       $('currentServing').textContent = data.vendor.currentServing || '-';
       $('eta').textContent = estWait(data.vendor.currentServing, myTokenNumber);
+      
+      // Add notification for new token
+      const shopName = data.vendor.name || vendorCode;
+      addNotifCard('Token Received', `You got token #${myTokenNumber} at ${shopName}.`, true, data.token._id, myTokenNumber, vendorCode);
+      
       // Persist for refresh
       localStorage.setItem('user_vendor_code', vendorCode);
       localStorage.setItem('user_token_number', String(myTokenNumber));
@@ -242,20 +382,30 @@
       loadMyShops();
     });
 
-    socket.on('vendor_update', (payload) => {
+    socket.on('vendor_update', async (payload) => {
       if (!joinedVendor || payload.vendorCode === joinedVendor) {
         $('currentServing').textContent = payload.currentServing || '-';
         $('eta').textContent = estWait(payload.currentServing, myTokenNumber);
         if (myTokenNumber) {
+          // Get vendor name for notifications
+          let vendorName = 'Shop';
+          try {
+            const vendorRes = await fetch(`/token/list?vendorCode=${encodeURIComponent(payload.vendorCode)}`);
+            const vendorData = await vendorRes.json();
+            if (vendorData.vendor && vendorData.vendor.name) {
+              vendorName = vendorData.vendor.name;
+            }
+          } catch (_) {}
+          
           if (payload.currentServing === myTokenNumber) {
             const title = 'Now Serving';
-            const body = `Your token ${myTokenNumber} is now being served.`;
-            addNotifCard(title, body);
+            const body = `Your token ${myTokenNumber} is now being served at ${vendorName}.`;
+            addNotifCard(title, body, false, localStorage.getItem('user_token_id'), myTokenNumber, payload.vendorCode); // Non-persistent - will be cleared when order completes
             notify(title, body);
           } else if (payload.nextWaiting === myTokenNumber) {
             const title = 'Next in Queue';
-            const body = `Your token ${myTokenNumber} is next in queue.`;
-            addNotifCard(title, body);
+            const body = `Your token ${myTokenNumber} is next in queue at ${vendorName}.`;
+            addNotifCard(title, body, true, localStorage.getItem('user_token_id'), myTokenNumber, payload.vendorCode);
             notify(title, body);
           }
         }
@@ -275,6 +425,21 @@
         let items = mineAll.items || [];
         if (!items.length) { container.innerHTML = '<div class="text-slate-400">No shops yet.</div>'; return; }
         const historyByTokenId = new Map((hist.records || []).map(r => [String(r.tokenId), r]));
+        
+        // Check for completed tokens and clear their notifications
+        const completedTokens = [];
+        items.forEach(it => {
+          const rec = it.token?._id ? historyByTokenId.get(String(it.token._id)) : null;
+          if (rec && rec.status === 'Completed') {
+            completedTokens.push(it.token._id);
+          }
+        });
+        
+        // Clear notifications for all completed tokens
+        completedTokens.forEach(tokenId => {
+          clearNotificationsForToken(tokenId);
+        });
+        
         // Filter out completed tokens so cards only show active/created ones
         items = items.filter(it => {
           const rec = it.token?._id ? historyByTokenId.get(String(it.token._id)) : null;
@@ -288,11 +453,12 @@
           const statusLabel = rec?.status ? rec.status : (it.token?.status === 'waiting' ? 'Pending' : (it.token?.status === 'served' ? 'Created' : (it.token?.status || '-')));
           const badge = statusLabel==='Created'?'bg-amber-600':(statusLabel==='Pending'?'bg-slate-600':'bg-emerald-600');
           const canUserConfirm = !!rec && rec.status !== 'Completed' && !rec.userConfirmed;
+          const shopName = it.vendorName || it.vendorCode;
           const card = document.createElement('div');
           card.className = 'rounded border border-slate-700 p-3 bg-slate-900';
           card.innerHTML = `
             <div class="flex items-center justify-between">
-              <div class="font-medium">${it.vendorName || it.vendorCode}</div>
+              <div class="font-medium">${shopName}</div>
               <div class="text-xs text-slate-400">#${it.token?.number ?? '-'}</div>
             </div>
             <div class="text-sm mt-1">Status: <span class="px-2 py-0.5 rounded text-xs ${badge}">${statusLabel}</span></div>
@@ -306,6 +472,12 @@
             btn.addEventListener('click', async () => {
               try {
                 await apiJson('/history/confirm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tokenId: it.token._id }) });
+                // Add notification for successful confirmation
+                addNotifCard('Service Confirmed', `Your service at ${shopName} has been confirmed.`, true, it.token._id, it.token.number, it.vendorCode);
+                // Clear all notifications for this token since it's now completed
+                setTimeout(() => {
+                  clearNotificationsForToken(it.token._id);
+                }, 2000);
                 await loadMyShops();
               } catch (e) { alert('Confirm failed'); }
             });
@@ -313,7 +485,7 @@
         }
       } catch (_) {}
     }
-    $('refreshShops').addEventListener('click', loadMyShops);
+    // Removed refresh button - shops now auto-update
 
     async function refreshVendorStatus(vendorCode) {
       try {
@@ -368,6 +540,78 @@
 
     // Removed explicit enable button per request
 
+    // Profile event handlers
+    $('profileBtn').addEventListener('click', () => {
+      const dropdown = $('profileDropdown');
+      dropdown.classList.toggle('hidden');
+    });
+
+    $('editProfileBtn').addEventListener('click', () => {
+      // Populate profile modal with current data
+      $('profileName').value = currentUser.name || '';
+      $('profileEmailInput').value = currentUser.email || '';
+      $('profilePhone').value = currentUser.phone || '';
+      
+      // Show modal
+      $('profileModal').classList.remove('hidden');
+      $('profileModal').classList.add('flex');
+      
+      // Close dropdown
+      $('profileDropdown').classList.add('hidden');
+    });
+
+    $('saveProfileBtn').addEventListener('click', async () => {
+      const name = $('profileName').value.trim();
+      const email = $('profileEmailInput').value.trim();
+      const phone = $('profilePhone').value.trim();
+      
+      if (!email) {
+        toast('Email is required');
+        return;
+      }
+      
+      try {
+        // Update user profile (you'll need to add this endpoint to server.js)
+        const response = await fetch('/auth/updateProfile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, phone })
+        });
+        
+        if (response.ok) {
+          // Update local user data
+          currentUser.name = name;
+          currentUser.email = email;
+          currentUser.phone = phone;
+          
+          // Update display
+          $('profileEmail').textContent = email;
+          $('profileInitial').textContent = (name || email).charAt(0).toUpperCase();
+          
+          // Close modal
+          $('profileModal').classList.add('hidden');
+          $('profileModal').classList.remove('flex');
+          
+          toast('Profile updated successfully');
+        } else {
+          const data = await response.json();
+          toast(data.error || 'Failed to update profile');
+        }
+      } catch (e) {
+        toast('Failed to update profile');
+      }
+    });
+
+    $('cancelProfileBtn').addEventListener('click', () => {
+      $('profileModal').classList.add('hidden');
+      $('profileModal').classList.remove('flex');
+    });
+
+    $('profileCloseBtn').addEventListener('click', () => {
+      $('profileModal').classList.add('hidden');
+      $('profileModal').classList.remove('flex');
+    });
+
     $('logoutBtn').addEventListener('click', async () => { 
       localStorage.removeItem('user_vendor_code');
       localStorage.removeItem('user_token_number');
@@ -375,12 +619,19 @@
       location.href = '/'; 
     });
 
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#profileBtn') && !e.target.closest('#profileDropdown')) {
+        $('profileDropdown').classList.add('hidden');
+      }
+    });
+
     // Ask for notification permission on load
     ensureNotifyPermission();
 
-    // Removed banner helpers per request
-
-    document.getElementById('notifClear').addEventListener('click', () => {
+    $('notifClear').addEventListener('click', () => {
+      // Clear all notifications from localStorage and UI
+      localStorage.removeItem('notifications');
       const list = document.getElementById('notifList');
       list.innerHTML = '<div class="text-slate-400">No notifications yet.</div>';
     });

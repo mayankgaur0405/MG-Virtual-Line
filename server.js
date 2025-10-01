@@ -161,6 +161,30 @@ app.post('/auth/logout', (req, res) => {
   res.json({ ok: true });
 });
 
+// Update user profile
+app.post('/auth/updateProfile', authRequired, async (req, res) => {
+  try {
+    const { name, email, phone } = req.body;
+    if (!email) return res.status(400).json({ error: 'email required' });
+    
+    // Check if email is already taken by another user
+    const existingUser = await User.findOne({ email, _id: { $ne: req.user.id } });
+    if (existingUser) return res.status(409).json({ error: 'email already taken' });
+    
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { name, email, phone },
+      { new: true }
+    );
+    
+    if (!user) return res.status(404).json({ error: 'user not found' });
+    
+    res.json({ user: { id: user._id, email: user.email, role: user.role, name: user.name, phone: user.phone } });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Socket.io vendor rooms
 io.on('connection', (socket) => {
   socket.on('join_vendor', (vendorCode) => {
@@ -411,11 +435,19 @@ app.get('/history/list', authRequired, async (req, res) => {
     if (req.user.role === 'user') {
       query.userId = req.user.id;
     } else if (req.user.role === 'admin') {
-      // Restrict to this admin's vendor (MVP assumes single vendor)
-      const myVendor = await Vendor.findOne({ ownerId: req.user.id });
-      const code = vendorCode || (myVendor ? myVendor.vendorCode : null);
-      if (!code) return res.json({ records: [] });
-      query.vendorCode = code;
+      // Restrict to this admin's vendors
+      if (vendorCode) {
+        // Check if admin owns this specific vendor
+        const myVendor = await Vendor.findOne({ ownerId: req.user.id, vendorCode });
+        if (!myVendor) return res.json({ records: [] });
+        query.vendorCode = vendorCode;
+      } else {
+        // Get all vendors owned by this admin
+        const myVendors = await Vendor.find({ ownerId: req.user.id });
+        const vendorCodes = myVendors.map(v => v.vendorCode);
+        if (vendorCodes.length === 0) return res.json({ records: [] });
+        query.vendorCode = { $in: vendorCodes };
+      }
     }
     if (start || end) {
       query.createdAt = {};
@@ -448,8 +480,8 @@ app.post('/history/confirm', authRequired, async (req, res) => {
       if (!hist.userId) hist.userId = req.user.id;
     } else if (req.user.role === 'admin') {
       // Ensure admin owns the vendor
-      const myVendor = await Vendor.findOne({ ownerId: req.user.id });
-      if (!myVendor || myVendor.vendorCode !== hist.vendorCode) return res.status(403).json({ error: 'forbidden' });
+      const myVendor = await Vendor.findOne({ ownerId: req.user.id, vendorCode: hist.vendorCode });
+      if (!myVendor) return res.status(403).json({ error: 'forbidden' });
       hist.adminConfirmed = true;
     }
     if (hist.adminConfirmed && hist.userConfirmed) {
@@ -473,8 +505,8 @@ app.get('/history/byToken', authRequired, async (req, res) => {
     if (req.user.role === 'user') {
       if (hist.userId && String(hist.userId) !== String(req.user.id)) return res.status(403).json({ error: 'forbidden' });
     } else if (req.user.role === 'admin') {
-      const myVendor = await Vendor.findOne({ ownerId: req.user.id });
-      if (!myVendor || myVendor.vendorCode !== hist.vendorCode) return res.status(403).json({ error: 'forbidden' });
+      const myVendor = await Vendor.findOne({ ownerId: req.user.id, vendorCode: hist.vendorCode });
+      if (!myVendor) return res.status(403).json({ error: 'forbidden' });
     }
     res.json({ record: hist });
   } catch (e) {

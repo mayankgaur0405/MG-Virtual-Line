@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
   <title>MG Virtual Line</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" href="data:," />
@@ -11,6 +11,20 @@
     .shine { position: relative; overflow: hidden; }
     .shine::after { content: ""; position: absolute; inset: -200% -50% auto; width: 200%; height: 200%; transform: rotate(25deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent); animation: shine 3s linear infinite; }
     @keyframes shine { 0% { transform: translateX(-100%) rotate(25deg);} 100% { transform: translateX(100%) rotate(25deg);} }
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .max-w-6xl { max-width: 100%; }
+      .p-4 { padding: 1rem; }
+      .p-8 { padding: 1.5rem; }
+      .md:p-12 { padding: 1.5rem; }
+      .text-3xl { font-size: 1.875rem; }
+      .md:text-4xl { font-size: 2rem; }
+      .gap-8 { gap: 1.5rem; }
+      .py-3 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+      .px-5 { padding-left: 1rem; padding-right: 1rem; }
+    }
+    /* Prevent zoom on input focus */
+    input, select, textarea { font-size: 16px; }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100">
