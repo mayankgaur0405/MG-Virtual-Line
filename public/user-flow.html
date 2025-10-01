@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>MG Virtual Line - User Flow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="data:," />
+  <style>
+    .card { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+    .shine { position: relative; overflow: hidden; }
+    .shine::after { content: ""; position: absolute; inset: -200% -50% auto; width: 200%; height: 200%; transform: rotate(25deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent); animation: shine 3s linear infinite; }
+    @keyframes shine { 0% { transform: translateX(-100%) rotate(25deg);} 100% { transform: translateX(100%) rotate(25deg);} }
+    .flow-step { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .flow-step:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,.15); }
+    .step-number { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+    .flow-arrow { color: #6366f1; }
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .max-w-6xl { max-width: 100%; }
+      .p-4 { padding: 1rem; }
+      .p-8 { padding: 1.5rem; }
+      .md:p-12 { padding: 1.5rem; }
+      .text-3xl { font-size: 1.875rem; }
+      .md:text-4xl { font-size: 2rem; }
+      .gap-8 { gap: 1.5rem; }
+      .py-3 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+      .px-5 { padding-left: 1rem; padding-right: 1rem; }
+      .flow-arrow { display: none; }
+    }
+    /* Prevent zoom on input focus */
+    input, select, textarea { font-size: 16px; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100">
+  <div class="max-w-6xl mx-auto p-4">
+    <header class="flex items-center justify-between py-4">
+      <div class="flex items-center gap-3">
+        <div class="h-8 w-8 rounded bg-indigo-600"></div>
+        <h1 class="text-xl font-bold">MG Virtual Line</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/" class="text-sm text-slate-400 hover:text-slate-300">Home</a>
+        <a href="/uniqueness.html" class="text-sm text-slate-400 hover:text-slate-300">Uniqueness</a>
+        <a href="/admin-flow.html" class="text-sm text-slate-400 hover:text-slate-300">Admin Flow</a>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="rounded-xl p-8 md:p-12 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 card shine">
+      <div class="text-center space-y-4">
+        <h2 class="text-3xl md:text-4xl font-bold">Customer Journey</h2>
+        <p class="text-slate-300 text-lg max-w-3xl mx-auto">
+          Experience the simplest way to join a queue. No apps, no forms, no hassle. 
+          Just scan, wait, and get notified when your order is ready.
+        </p>
+        <div class="text-center pt-2">
+          <span class="text-slate-400 text-sm">Designed by <span class="text-emerald-400 font-medium">Mayank Gaur</span> • Revolutionary customer experience</span>
+        </div>
+        <div class="flex justify-center gap-4 pt-4">
+          <span class="px-4 py-2 rounded-full bg-emerald-600 text-white text-sm font-medium">3 Simple Steps</span>
+          <span class="px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-medium">Real-time Updates</span>
+          <span class="px-4 py-2 rounded-full bg-purple-600 text-white text-sm font-medium">Smart Notifications</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Flow Overview -->
+    <section class="mt-8 card bg-slate-800 border border-slate-700 rounded-lg p-6">
+      <h3 class="text-2xl font-bold mb-6 text-center text-indigo-400">Complete User Flow</h3>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="flow-step card bg-slate-700 border border-slate-600 rounded-lg p-6 text-center">
+          <div class="step-number h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-white">1</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2 text-emerald-400">Scan QR Code</h4>
+          <p class="text-slate-400 text-sm">Point your camera at the shop's QR code. Instantly redirected to the queue system.</p>
+        </div>
+        <div class="flow-arrow text-center text-4xl font-bold hidden md:block">→</div>
+        <div class="flow-step card bg-slate-700 border border-slate-600 rounded-lg p-6 text-center">
+          <div class="step-number h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-white">2</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2 text-blue-400">Get Token</h4>
+          <p class="text-slate-400 text-sm">Add optional note and get your token number. See your position in real-time.</p>
+        </div>
+        <div class="flow-arrow text-center text-4xl font-bold hidden md:block">→</div>
+        <div class="flow-step card bg-slate-700 border border-slate-600 rounded-lg p-6 text-center">
+          <div class="step-number h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-white">3</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2 text-purple-400">Get Notified</h4>
+          <p class="text-slate-400 text-sm">Receive real-time notifications when your order is ready for collection.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Detailed Steps -->
+    <section class="mt-8">
+      <h3 class="text-2xl font-bold mb-6 text-emerald-400">Step-by-Step Breakdown</h3>
+      <div class="space-y-6">
+        <!-- Step 1 -->
+        <div class="card bg-slate-800 border border-slate-700 rounded-lg p-6">
+          <div class="flex items-start gap-4">
+            <div class="step-number h-12 w-12 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-lg font-bold text-white">1</span>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-xl mb-3 text-emerald-400">Arrive at the Shop</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">What You See:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• QR code displayed at the shop entrance or counter</li>
+                    <li>• Shop name and current serving number visible</li>
+                    <li>• Clear instructions: "Scan to join queue"</li>
+                  </ul>
+                </div>
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">What You Do:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• Open your phone's camera app</li>
+                    <li>• Point camera at the QR code</li>
+                    <li>• Tap the notification to open the queue page</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mt-4 p-4 bg-slate-900 rounded-lg border border-slate-600">
+                <p class="text-slate-300 text-sm">
+                  <strong class="text-emerald-400">Pro Tip:</strong> No need to download any apps! Your phone's built-in camera works perfectly.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="card bg-slate-800 border border-slate-700 rounded-lg p-6">
+          <div class="flex items-start gap-4">
+            <div class="step-number h-12 w-12 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-lg font-bold text-white">2</span>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-xl mb-3 text-blue-400">Join the Queue</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">Queue Information:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• Shop name automatically filled</li>
+                    <li>• Current serving number displayed</li>
+                    <li>• Estimated wait time shown</li>
+                    <li>• Optional note field for special requests</li>
+                  </ul>
+                </div>
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">Your Actions:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• Add optional note (e.g., "Extra spicy", "No onions")</li>
+                    <li>• Tap "Get Token" button</li>
+                    <li>• Receive your unique token number</li>
+                    <li>• See your position in the queue</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mt-4 p-4 bg-slate-900 rounded-lg border border-slate-600">
+                <p class="text-slate-300 text-sm">
+                  <strong class="text-blue-400">Real-time Updates:</strong> Your position updates automatically as the queue progresses.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="card bg-slate-800 border border-slate-700 rounded-lg p-6">
+          <div class="flex items-start gap-4">
+            <div class="step-number h-12 w-12 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-lg font-bold text-white">3</span>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-xl mb-3 text-purple-400">Wait & Get Notified</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">Live Dashboard:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• Your token number prominently displayed</li>
+                    <li>• Current serving number updates in real-time</li>
+                    <li>• Estimated wait time recalculated</li>
+                    <li>• Queue position and status visible</li>
+                  </ul>
+                </div>
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">Smart Notifications:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• "Next in Queue" notification when you're up next</li>
+                    <li>• "Now Serving" notification when your order is ready</li>
+                    <li>• Browser notifications (with permission)</li>
+                    <li>• In-app notification history</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mt-4 p-4 bg-slate-900 rounded-lg border border-slate-600">
+                <p class="text-slate-300 text-sm">
+                  <strong class="text-purple-400">Freedom to Wait:</strong> You can browse nearby shops, sit comfortably, or do other activities while waiting.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="card bg-slate-800 border border-slate-700 rounded-lg p-6">
+          <div class="flex items-start gap-4">
+            <div class="step-number h-12 w-12 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-lg font-bold text-white">4</span>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-xl mb-3 text-amber-400">Collect Your Order</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">When Notified:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• Go to the counter when you receive "Now Serving" notification</li>
+                    <li>• Show your token number to the vendor</li>
+                    <li>• Collect your order</li>
+                    <li>• Confirm service completion in the app</li>
+                  </ul>
+                </div>
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">Service History:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• All your orders are saved in history</li>
+                    <li>• Track service times and wait periods</li>
+                    <li>• View completed orders across all shops</li>
+                    <li>• Rate and review your experience</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mt-4 p-4 bg-slate-900 rounded-lg border border-slate-600">
+                <p class="text-slate-300 text-sm">
+                  <strong class="text-amber-400">Complete Experience:</strong> From joining the queue to collecting your order, everything is tracked and optimized.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- User Benefits -->
+    <section class="mt-8 card bg-slate-800 border border-slate-700 rounded-lg p-6">
+      <h3 class="text-2xl font-bold mb-6 text-center text-rose-400">Why Customers Love MG Virtual Line</h3>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="text-center">
+          <div class="h-16 w-16 rounded-full bg-emerald-600 flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">⚡</span>
+          </div>
+          <h4 class="font-semibold text-slate-300 mb-2">Instant Join</h4>
+          <p class="text-slate-400 text-sm">No waiting in physical lines to get a token</p>
+        </div>
+        <div class="text-center">
+          <div class="h-16 w-16 rounded-full bg-blue-600 flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">📱</span>
+          </div>
+          <h4 class="font-semibold text-slate-300 mb-2">No App Required</h4>
+          <p class="text-slate-400 text-sm">Works with any smartphone camera</p>
+        </div>
+        <div class="text-center">
+          <div class="h-16 w-16 rounded-full bg-purple-600 flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">🔔</span>
+          </div>
+          <h4 class="font-semibold text-slate-300 mb-2">Smart Alerts</h4>
+          <p class="text-slate-400 text-sm">Know exactly when your order is ready</p>
+        </div>
+        <div class="text-center">
+          <div class="h-16 w-16 rounded-full bg-amber-600 flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl">🆓</span>
+          </div>
+          <h4 class="font-semibold text-slate-300 mb-2">Completely Free</h4>
+          <p class="text-slate-400 text-sm">No charges, no subscriptions, no hidden fees</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- User Interface Preview -->
+    <section class="mt-8 card bg-slate-800 border border-slate-700 rounded-lg p-6">
+      <h3 class="text-2xl font-bold mb-6 text-center text-indigo-400">User Interface Preview</h3>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <h4 class="font-semibold text-slate-300">Queue Status Dashboard</h4>
+          <div class="bg-slate-900 rounded-lg p-4 border border-slate-600">
+            <div class="grid grid-cols-3 gap-3 text-center mb-4">
+              <div class="p-3 rounded bg-slate-800">
+                <div class="text-xs text-slate-400">Your Token</div>
+                <div class="text-2xl font-bold text-emerald-400">#12</div>
+              </div>
+              <div class="p-3 rounded bg-slate-800">
+                <div class="text-xs text-slate-400">Serving</div>
+                <div class="text-2xl font-bold text-blue-400">#9</div>
+              </div>
+              <div class="p-3 rounded bg-slate-800">
+                <div class="text-xs text-slate-400">Est. Wait</div>
+                <div class="text-2xl font-bold text-purple-400">6m</div>
+              </div>
+            </div>
+            <div class="text-sm text-slate-300">
+              <p>📍 <strong>Pizza Palace</strong></p>
+              <p>📝 Note: Extra cheese, no onions</p>
+              <p>⏰ Joined: 2:30 PM</p>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <h4 class="font-semibold text-slate-300">Notification Center</h4>
+          <div class="bg-slate-900 rounded-lg p-4 border border-slate-600 space-y-3">
+            <div class="flex items-center gap-3 p-2 rounded bg-emerald-900 border border-emerald-700">
+              <span class="text-emerald-400">🔔</span>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-emerald-300">Now Serving</div>
+                <div class="text-xs text-slate-400">Your token #12 is ready for collection</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 p-2 rounded bg-blue-900 border border-blue-700">
+              <span class="text-blue-400">⏰</span>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-blue-300">Next in Queue</div>
+                <div class="text-xs text-slate-400">You're next! Please be ready</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 p-2 rounded bg-slate-700 border border-slate-600">
+              <span class="text-slate-400">📱</span>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-slate-300">Token Received</div>
+                <div class="text-xs text-slate-400">You got token #12 at Pizza Palace</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Multi-Shop Experience -->
+    <section class="mt-8 card bg-slate-800 border border-slate-700 rounded-lg p-6">
+      <h3 class="text-2xl font-bold mb-6 text-center text-green-400">Multi-Shop Experience</h3>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <h4 class="font-semibold text-slate-300">Your Active Shops</h4>
+          <div class="space-y-3">
+            <div class="bg-slate-900 rounded-lg p-4 border border-slate-600">
+              <div class="flex items-center justify-between mb-2">
+                <div class="font-medium text-slate-300">Pizza Palace</div>
+                <div class="text-sm text-slate-400">#12</div>
+              </div>
+              <div class="text-sm text-slate-400 mb-2">Status: <span class="px-2 py-1 rounded text-xs bg-amber-600">Created</span></div>
+              <button class="text-xs px-2 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white">Confirm</button>
+            </div>
+            <div class="bg-slate-900 rounded-lg p-4 border border-slate-600">
+              <div class="flex items-center justify-between mb-2">
+                <div class="font-medium text-slate-300">Coffee Corner</div>
+                <div class="text-sm text-slate-400">#8</div>
+              </div>
+              <div class="text-sm text-slate-400 mb-2">Status: <span class="px-2 py-1 rounded text-xs bg-slate-600">Pending</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <h4 class="font-semibold text-slate-300">Benefits of Multi-Shop</h4>
+          <ul class="text-slate-400 text-sm space-y-2">
+            <li>• Join multiple queues simultaneously</li>
+            <li>• Track all your orders in one place</li>
+            <li>• Get notifications for each shop independently</li>
+            <li>• View complete service history across all vendors</li>
+            <li>• No need to remember different apps or systems</li>
+          </ul>
+          <div class="mt-4 p-3 bg-slate-900 rounded-lg border border-slate-600">
+            <p class="text-slate-300 text-sm">
+              <strong class="text-green-400">Pro Tip:</strong> You can join a queue at one shop, then browse nearby shops and join their queues too!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="mt-8 text-center">
+      <div class="card bg-gradient-to-r from-emerald-600 to-blue-600 rounded-lg p-8">
+        <h3 class="text-2xl font-bold mb-4">Ready to Experience Seamless Queue Management?</h3>
+        <p class="text-emerald-100 mb-6">Join thousands of customers enjoying stress-free waiting</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/user.html" class="px-6 py-3 rounded bg-white text-emerald-600 font-semibold hover:bg-slate-100 transition-colors">
+            Try as Customer
+          </a>
+          <a href="/" class="px-6 py-3 rounded border border-white text-white font-semibold hover:bg-white hover:text-emerald-600 transition-colors">
+            Learn More
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

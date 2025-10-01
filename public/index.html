@@ -34,7 +34,14 @@
         <div class="h-8 w-8 rounded bg-indigo-600"></div>
         <h1 class="text-xl font-bold">MG Virtual Line</h1>
       </div>
-      <div class="text-sm text-slate-400">Simple, fast, zero-friction queues</div>
+      <div class="flex items-center gap-3">
+        <div class="text-sm text-slate-400">Simple, fast, zero-friction queues</div>
+        <div class="flex gap-2">
+          <a href="/uniqueness.html" class="text-xs px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Uniqueness</a>
+          <a href="/user-flow.html" class="text-xs px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">User Flow</a>
+          <a href="/admin-flow.html" class="text-xs px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Admin Flow</a>
+        </div>
+      </div>
     </header>
 
     <section class="rounded-xl p-8 md:p-12 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 card shine">
@@ -42,6 +49,9 @@
         <div class="space-y-3">
           <h2 class="text-3xl md:text-4xl font-bold">Run a virtual line in seconds</h2>
           <p class="text-slate-300">Users scan a QR to join. You advance the queue. Everyone sees live updates.</p>
+          <div class="text-slate-400 text-sm pt-1">
+            Created by <span class="text-indigo-400 font-medium">Mayank Gaur</span> • World's first QR-only queue system
+          </div>
           <div class="flex gap-3 pt-2">
             <a href="#auth" class="px-5 py-3 rounded bg-indigo-600 hover:bg-indigo-500 text-white">Login / Signup</a>
             <a href="/user.html" class="px-5 py-3 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700">Try as User</a>

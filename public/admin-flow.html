@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>MG Virtual Line - Admin Flow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="data:," />
+  <style>
+    .card { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+    .shine { position: relative; overflow: hidden; }
+    .shine::after { content: ""; position: absolute; inset: -200% -50% auto; width: 200%; height: 200%; transform: rotate(25deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent); animation: shine 3s linear infinite; }
+    @keyframes shine { 0% { transform: translateX(-100%) rotate(25deg);} 100% { transform: translateX(100%) rotate(25deg);} }
+    .flow-step { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .flow-step:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,.15); }
+    .step-number { background: linear-gradient(135deg, #10b981, #059669); }
+    .flow-arrow { color: #10b981; }
+    .feature-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .feature-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,.15); }
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .max-w-6xl { max-width: 100%; }
+      .p-4 { padding: 1rem; }
+      .p-8 { padding: 1.5rem; }
+      .md:p-12 { padding: 1.5rem; }
+      .text-3xl { font-size: 1.875rem; }
+      .md:text-4xl { font-size: 2rem; }
+      .gap-8 { gap: 1.5rem; }
+      .py-3 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+      .px-5 { padding-left: 1rem; padding-right: 1rem; }
+      .flow-arrow { display: none; }
+    }
+    /* Prevent zoom on input focus */
+    input, select, textarea { font-size: 16px; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100">
+  <div class="max-w-6xl mx-auto p-4">
+    <header class="flex items-center justify-between py-4">
+      <div class="flex items-center gap-3">
+        <div class="h-8 w-8 rounded bg-emerald-600"></div>
+        <h1 class="text-xl font-bold">MG Virtual Line</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/" class="text-sm text-slate-400 hover:text-slate-300">Home</a>
+        <a href="/uniqueness.html" class="text-sm text-slate-400 hover:text-slate-300">Uniqueness</a>
+        <a href="/user-flow.html" class="text-sm text-slate-400 hover:text-slate-300">User Flow</a>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="rounded-xl p-8 md:p-12 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 card shine">
+      <div class="text-center space-y-4">
+        <h2 class="text-3xl md:text-4xl font-bold">Admin Dashboard</h2>
+        <p class="text-slate-300 text-lg max-w-3xl mx-auto">
+          Manage your virtual queues with ease. Create vendors, monitor queues, and serve customers efficiently. 
+          Built by <span class="text-emerald-400 font-semibold">Mayank Gaur</span> for modern business owners.
+        </p>
+        <div class="text-center pt-2">
+          <span class="text-slate-400 text-sm">Created by <span class="text-emerald-400 font-medium">Mayank Gaur</span> • Empowering small businesses worldwide</span>
+        </div>
+        <div class="flex justify-center gap-4 pt-4">
+          <span class="px-4 py-2 rounded-full bg-emerald-600 text-white text-sm font-medium">Multi-Vendor Support</span>
+          <span class="px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-medium">Real-time Updates</span>
+          <span class="px-4 py-2 rounded-full bg-purple-600 text-white text-sm font-medium">Analytics & History</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Flow Overview -->
+    <section class="mt-8 card bg-slate-800 border border-slate-700 rounded-lg p-6">
+      <h3 class="text-2xl font-bold mb-6 text-center text-emerald-400">Complete Admin Flow</h3>
+      <div class="grid md:grid-cols-4 gap-6">
+        <div class="flow-step card bg-slate-700 border border-slate-600 rounded-lg p-6 text-center">
+          <div class="step-number h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-white">1</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2 text-emerald-400">Create Vendor</h4>
+          <p class="text-slate-400 text-sm">Set up a new shop or vendor profile with unique QR code</p>
+        </div>
+        <div class="flow-arrow text-center text-4xl font-bold hidden md:block">→</div>
+        <div class="flow-step card bg-slate-700 border border-slate-600 rounded-lg p-6 text-center">
+          <div class="step-number h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-white">2</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2 text-blue-400">Share QR Code</h4>
+          <p class="text-slate-400 text-sm">Display QR code for customers to scan and join the queue</p>
+        </div>
+        <div class="flow-arrow text-center text-4xl font-bold hidden md:block">→</div>
+        <div class="flow-step card bg-slate-700 border border-slate-600 rounded-lg p-6 text-center">
+          <div class="step-number h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-white">3</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2 text-purple-400">Manage Queue</h4>
+          <p class="text-slate-400 text-sm">Monitor tokens, advance queue, and serve customers</p>
+        </div>
+        <div class="flow-arrow text-center text-4xl font-bold hidden md:block">→</div>
+        <div class="flow-step card bg-slate-700 border border-slate-600 rounded-lg p-6 text-center">
+          <div class="step-number h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="text-2xl font-bold text-white">4</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2 text-amber-400">Track Analytics</h4>
+          <p class="text-slate-400 text-sm">View history, performance metrics, and customer data</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Detailed Steps -->
+    <section class="mt-8">
+      <h3 class="text-2xl font-bold mb-6 text-emerald-400">Step-by-Step Admin Guide</h3>
+      <div class="space-y-6">
+        <!-- Step 1 -->
+        <div class="card bg-slate-800 border border-slate-700 rounded-lg p-6">
+          <div class="flex items-start gap-4">
+            <div class="step-number h-12 w-12 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-lg font-bold text-white">1</span>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-xl mb-3 text-emerald-400">Create New Vendor</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">Vendor Setup:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• Enter vendor/shop name (must be unique)</li>
+                    <li>• System generates unique vendor code (e.g., ABC123)</li>
+                    <li>• QR code automatically created and displayed</li>
+                    <li>• Vendor profile saved to your account</li>
+                  </ul>
+                </div>
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">What You Get:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• Unique QR code for this vendor</li>
+                    <li>• Vendor dashboard with queue management</li>
+                    <li>• Real-time token tracking system</li>
+                    <li>• Analytics and history tracking</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mt-4 p-4 bg-slate-900 rounded-lg border border-slate-600">
+                <p class="text-slate-300 text-sm">
+                  <strong class="text-emerald-400">Pro Tip:</strong> You can create multiple vendors for different locations or business types.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="card bg-slate-800 border border-slate-700 rounded-lg p-6">
+          <div class="flex items-start gap-4">
+            <div class="step-number h-12 w-12 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-lg font-bold text-white">2</span>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-xl mb-3 text-blue-400">Display QR Code</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">QR Code Options:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• Download high-resolution QR code image</li>
+                    <li>• Print and display at shop entrance or counter</li>
+                    <li>• Share QR code digitally via social media</li>
+                    <li>• Embed in website or digital signage</li>
+                  </ul>
+                </div>
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">Best Practices:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• Place QR code at eye level for easy scanning</li>
+                    <li>• Ensure good lighting and clear visibility</li>
+                    <li>• Add simple instructions: "Scan to join queue"</li>
+                    <li>• Keep QR code clean and undamaged</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mt-4 p-4 bg-slate-900 rounded-lg border border-slate-600">
+                <p class="text-slate-300 text-sm">
+                  <strong class="text-blue-400">Customer Experience:</strong> Customers scan QR code and are instantly redirected to join your queue.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="card bg-slate-800 border border-slate-700 rounded-lg p-6">
+          <div class="flex items-start gap-4">
+            <div class="step-number h-12 w-12 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-lg font-bold text-white">3</span>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-xl mb-3 text-purple-400">Monitor & Manage Queue</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">Queue Dashboard:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• Real-time token list with customer notes</li>
+                    <li>• Current serving number display</li>
+                    <li>• Next waiting token highlighted</li>
+                    <li>• Queue statistics and wait times</li>
+                  </ul>
+                </div>
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">Queue Actions:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• "Next Token" button to advance queue</li>
+                    <li>• "Clear Queue" to reset for new day</li>
+                    <li>• View customer notes and special requests</li>
+                    <li>• Confirm service completion</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mt-4 p-4 bg-slate-900 rounded-lg border border-slate-600">
+                <p class="text-slate-300 text-sm">
+                  <strong class="text-purple-400">Real-time Updates:</strong> All changes are instantly reflected to customers via live notifications.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="card bg-slate-800 border border-slate-700 rounded-lg p-6">
+          <div class="flex items-start gap-4">
+            <div class="step-number h-12 w-12 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-lg font-bold text-white">4</span>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-xl mb-3 text-amber-400">Analytics & History</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">Performance Metrics:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• Total tokens served per day/week/month</li>
+                    <li>• Average wait times and service duration</li>
+                    <li>• Peak hours and busy periods</li>
+                    <li>• Customer satisfaction and completion rates</li>
+                  </ul>
+                </div>
+                <div class="space-y-3">
+                  <h5 class="font-medium text-slate-300">History Management:</h5>
+                  <ul class="text-slate-400 text-sm space-y-2">
+                    <li>• Complete service history with timestamps</li>
+                    <li>• Filter by date range and vendor</li>
+                    <li>• Export data for accounting or analysis</li>
+                    <li>• Track repeat customers and loyalty</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="mt-4 p-4 bg-slate-900 rounded-lg border border-slate-600">
+                <p class="text-slate-300 text-sm">
+                  <strong class="text-amber-400">Business Insights:</strong> Use analytics to optimize operations, staffing, and customer service.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin Dashboard Features -->
+    <section class="mt-8 card bg-slate-800 border border-slate-700 rounded-lg p-6">
+      <h3 class="text-2xl font-bold mb-6 text-center text-indigo-400">Admin Dashboard Features</h3>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="feature-card card bg-slate-700 border border-slate-600 rounded-lg p-6">
+          <div class="h-12 w-12 rounded-lg bg-emerald-600 flex items-center justify-center mb-4">
+            <span class="text-2xl">🏪</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2">Multi-Vendor Support</h4>
+          <p class="text-slate-400 text-sm">Manage multiple shops, locations, or business types from one dashboard.</p>
+        </div>
+
+        <div class="feature-card card bg-slate-700 border border-slate-600 rounded-lg p-6">
+          <div class="h-12 w-12 rounded-lg bg-blue-600 flex items-center justify-center mb-4">
+            <span class="text-2xl">📊</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2">Real-time Analytics</h4>
+          <p class="text-slate-400 text-sm">Live queue statistics, wait times, and performance metrics.</p>
+        </div>
+
+        <div class="feature-card card bg-slate-700 border border-slate-600 rounded-lg p-6">
+          <div class="h-12 w-12 rounded-lg bg-purple-600 flex items-center justify-center mb-4">
+            <span class="text-2xl">🔔</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2">Smart Notifications</h4>
+          <p class="text-slate-400 text-sm">Automatic customer notifications when orders are ready.</p>
+        </div>
+
+        <div class="feature-card card bg-slate-700 border border-slate-600 rounded-lg p-6">
+          <div class="h-12 w-12 rounded-lg bg-amber-600 flex items-center justify-center mb-4">
+            <span class="text-2xl">📱</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2">Mobile Responsive</h4>
+          <p class="text-slate-400 text-sm">Full functionality on smartphones, tablets, and desktops.</p>
+        </div>
+
+        <div class="feature-card card bg-slate-700 border border-slate-600 rounded-lg p-6">
+          <div class="h-12 w-12 rounded-lg bg-rose-600 flex items-center justify-center mb-4">
+            <span class="text-2xl">📈</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2">Performance Tracking</h4>
+          <p class="text-slate-400 text-sm">Monitor service times, customer satisfaction, and business growth.</p>
+        </div>
+
+        <div class="feature-card card bg-slate-700 border border-slate-600 rounded-lg p-6">
+          <div class="h-12 w-12 rounded-lg bg-green-600 flex items-center justify-center mb-4">
+            <span class="text-2xl">🔒</span>
+          </div>
+          <h4 class="font-semibold text-lg mb-2">Secure & Reliable</h4>
+          <p class="text-slate-400 text-sm">Enterprise-grade security with 99.9% uptime guarantee.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Preview -->
+    <section class="mt-8 card bg-slate-800 border border-slate-700 rounded-lg p-6">
+      <h3 class="text-2xl font-bold mb-6 text-center text-blue-400">Admin Dashboard Preview</h3>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <h4 class="font-semibold text-slate-300">Vendor Management</h4>
+          <div class="bg-slate-900 rounded-lg p-4 border border-slate-600">
+            <div class="mb-4">
+              <input class="w-full border border-slate-700 bg-slate-800 rounded px-3 py-2 text-sm" placeholder="Shop/Office Name" />
+              <button class="mt-2 px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-sm">Create New Vendor</button>
+            </div>
+            <div class="text-sm text-slate-300">
+              <p>🏪 <strong>Pizza Palace</strong> (ABC123)</p>
+              <p>☕ <strong>Coffee Corner</strong> (XYZ789)</p>
+              <p>🍔 <strong>Burger Joint</strong> (DEF456)</p>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <h4 class="font-semibold text-slate-300">Queue Status</h4>
+          <div class="bg-slate-900 rounded-lg p-4 border border-slate-600">
+            <div class="grid grid-cols-3 gap-3 text-center mb-4">
+              <div class="p-3 rounded bg-slate-800">
+                <div class="text-xs text-slate-400">Serving</div>
+                <div class="text-2xl font-bold text-emerald-400">#9</div>
+              </div>
+              <div class="p-3 rounded bg-slate-800">
+                <div class="text-xs text-slate-400">Last Issued</div>
+                <div class="text-2xl font-bold text-blue-400">#15</div>
+              </div>
+              <div class="p-3 rounded bg-slate-800">
+                <div class="text-xs text-slate-400">Next Waiting</div>
+                <div class="text-2xl font-bold text-purple-400">#10</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="flex-1 py-2 px-3 rounded bg-indigo-600 hover:bg-indigo-500 text-white text-sm">Next Token</button>
+              <button class="flex-1 py-2 px-3 rounded bg-amber-600 hover:bg-amber-500 text-white text-sm">Clear Queue</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Business Benefits -->
+    <section class="mt-8 card bg-slate-800 border border-slate-700 rounded-lg p-6">
+      <h3 class="text-2xl font-bold mb-6 text-center text-green-400">Business Benefits</h3>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="text-center">
+          <div class="text-3xl font-bold text-emerald-400 mb-2">50%</div>
+          <div class="text-slate-300 font-medium">Faster Service</div>
+          <div class="text-slate-400 text-sm">Reduced wait times and improved efficiency</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-blue-400 mb-2">24/7</div>
+          <div class="text-slate-300 font-medium">Queue Management</div>
+          <div class="text-slate-400 text-sm">Always-on system with no downtime</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-purple-400 mb-2">100%</div>
+          <div class="text-slate-300 font-medium">Customer Satisfaction</div>
+          <div class="text-slate-400 text-sm">No more lost customers due to long waits</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-amber-400 mb-2">$0</div>
+          <div class="text-slate-300 font-medium">Setup Cost</div>
+          <div class="text-slate-400 text-sm">No hardware, no monthly fees</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Success Stories -->
+    <section class="mt-8 card bg-slate-800 border border-slate-700 rounded-lg p-6">
+      <h3 class="text-2xl font-bold mb-6 text-center text-rose-400">Success Stories</h3>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-slate-900 rounded-lg p-4 border border-slate-600">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="h-10 w-10 rounded-full bg-emerald-600 flex items-center justify-center">
+              <span class="text-lg">🍕</span>
+            </div>
+            <div>
+              <div class="font-semibold text-slate-300">Pizza Palace</div>
+              <div class="text-xs text-slate-400">Food & Beverage</div>
+            </div>
+          </div>
+          <p class="text-slate-400 text-sm">
+            "Reduced customer wait times by 60% and increased daily orders by 40%. 
+            Customers love the convenience of joining the queue from anywhere."
+          </p>
+        </div>
+        <div class="bg-slate-900 rounded-lg p-4 border border-slate-600">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
+              <span class="text-lg">💇</span>
+            </div>
+            <div>
+              <div class="font-semibold text-slate-300">Style Studio</div>
+              <div class="text-xs text-slate-400">Beauty & Wellness</div>
+            </div>
+          </div>
+          <p class="text-slate-400 text-sm">
+            "Perfect for managing appointment queues. Customers can browse nearby shops 
+            while waiting, and we never lose customers due to long waits."
+          </p>
+        </div>
+        <div class="bg-slate-900 rounded-lg p-4 border border-slate-600">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="h-10 w-10 rounded-full bg-purple-600 flex items-center justify-center">
+              <span class="text-lg">🏪</span>
+            </div>
+            <div>
+              <div class="font-semibold text-slate-300">Tech Repair Hub</div>
+              <div class="text-xs text-slate-400">Electronics & Repair</div>
+            </div>
+          </div>
+          <p class="text-slate-400 text-sm">
+            "Game-changer for our repair service. Customers get real-time updates on 
+            their device status, and we can manage multiple repairs efficiently."
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="mt-8 text-center">
+      <div class="card bg-gradient-to-r from-emerald-600 to-blue-600 rounded-lg p-8">
+        <h3 class="text-2xl font-bold mb-4">Ready to Transform Your Business?</h3>
+        <p class="text-emerald-100 mb-6">Join hundreds of businesses already using MG Virtual Line</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/admin.html" class="px-6 py-3 rounded bg-white text-emerald-600 font-semibold hover:bg-slate-100 transition-colors">
+            Try Admin Dashboard
+          </a>
+          <a href="/" class="px-6 py-3 rounded border border-white text-white font-semibold hover:bg-white hover:text-emerald-600 transition-colors">
+            Learn More
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
