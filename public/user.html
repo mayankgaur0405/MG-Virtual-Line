@@ -18,7 +18,7 @@
       border-radius: 50%;
       width: 200px;
       height: 200px;
-      padding: 0;
+      padding: 24px;
       position: relative;
       overflow: hidden;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -30,7 +30,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       text-align: center;
       margin: 0 auto;
     }
@@ -90,14 +90,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       z-index: 3;
       position: relative;
       flex: 0 0 auto;
     }
     
     .token-name {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       font-weight: 700;
       color: #f8fafc;
       letter-spacing: -0.025em;
@@ -108,22 +108,40 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      padding: 0 4px;
+      padding: 0 6px;
       word-break: break-word;
     }
     
-    /* Special handling for very long shop names */
-    .token-name.long-name {
-      font-size: 0.7rem;
-      line-height: 1.0;
-      max-width: 110px;
-      white-space: normal;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-height: 1.4em;
+    /* Clickable token styling */
+    .token-card.clickable {
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .token-card.clickable:hover {
+      transform: translateY(-6px) scale(1.08);
+      box-shadow: 
+        0 16px 32px -8px rgba(0, 0, 0, 0.4),
+        0 12px 24px -6px rgba(0, 0, 0, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+    }
+    
+    .token-card.clickable::before {
+      content: '⋯';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      font-weight: bold;
+      z-index: 4;
+      opacity: 0.7;
+    }
+    
+    .token-card.clickable:hover::before {
+      opacity: 1;
+      color: #f8fafc;
     }
     
     .token-id {
@@ -131,21 +149,51 @@
       color: white;
       padding: 4px 12px;
       border-radius: 16px;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-weight: 700;
       box-shadow: 0 2px 4px rgba(59, 130, 246, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.2);
       z-index: 3;
       position: relative;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+    }
+    
+    .token-vendor-code {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      margin-bottom: 6px;
+      z-index: 3;
+      position: relative;
+    }
+    
+    .vendor-code-label {
+      color: #94a3b8;
+      font-size: 0.55rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .vendor-code-value {
+      background: linear-gradient(135deg, #374151, #4b5563);
+      color: #f8fafc;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.05em;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .token-status {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
-      margin-bottom: 6px;
+      gap: 3px;
+      margin-bottom: 8px;
       z-index: 3;
       position: relative;
       flex: 0 0 auto;
@@ -161,14 +209,14 @@
     
     .status-badge {
       padding: 3px 10px;
-      border-radius: 12px;
+      border-radius: 14px;
       font-size: 0.6rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       position: relative;
       overflow: hidden;
-      max-width: 100px;
+      max-width: 90px;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
@@ -206,7 +254,7 @@
     .token-actions {
       display: flex;
       justify-content: center;
-      margin-top: 2px;
+      margin-top: 4px;
       z-index: 3;
       position: relative;
       flex: 0 0 auto;
@@ -214,7 +262,7 @@
     
     .token-btn {
       padding: 4px 10px;
-      border-radius: 16px;
+      border-radius: 14px;
       font-size: 0.6rem;
       font-weight: 600;
       text-transform: uppercase;
@@ -224,7 +272,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      max-width: 90px;
+      max-width: 80px;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
@@ -375,6 +423,147 @@
       100% { transform: rotate(360deg); }
     }
     
+    /* Token Details Modal */
+    .token-details-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .token-details-modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .token-details-content {
+      background: linear-gradient(145deg, #1e293b, #334155);
+      border: 2px solid #475569;
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      box-shadow: 
+        0 20px 40px -8px rgba(0, 0, 0, 0.5),
+        0 8px 16px -4px rgba(0, 0, 0, 0.3);
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .token-details-modal.show .token-details-content {
+      transform: scale(1);
+    }
+    
+    .token-details-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+    
+    .token-details-close:hover {
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .token-details-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 8px;
+    }
+    
+    .token-details-id {
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0 auto 16px;
+      display: inline-block;
+      box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+    }
+    
+    .token-details-status {
+      margin-bottom: 20px;
+    }
+    
+    .token-details-vendor-code {
+      margin-bottom: 16px;
+    }
+    
+    .token-details-status-label {
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+    
+    .token-details-status-badge {
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .token-details-status-badge.pending {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+    }
+    
+    .token-details-status-badge.created {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+    
+    .token-details-status-badge.completed {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+      color: white;
+    }
+    
+    .token-details-actions {
+      margin-top: 20px;
+    }
+    
+    .token-details-btn {
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+    }
+    
+    .token-details-btn:hover {
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      transform: translateY(-2px);
+    }
+    
     /* Mobile optimizations */
     @media (max-width: 768px) {
       .max-w-5xl { max-width: 100%; }
@@ -389,34 +578,49 @@
       .token-card {
         width: 160px;
         height: 160px;
+        padding: 18px;
       }
       
       .token-name {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         max-width: 100px;
         margin-bottom: 4px;
       }
       
+      .token-name.long-name {
+        font-size: 0.6rem;
+        max-width: 95px;
+      }
+      
       .token-id {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         padding: 3px 10px;
-        margin-bottom: 3px;
+        margin-bottom: 4px;
+      }
+      
+      .vendor-code-label {
+        font-size: 0.5rem;
+      }
+      
+      .vendor-code-value {
+        font-size: 0.55rem;
+        padding: 2px 6px;
       }
       
       .status-label {
-        font-size: 0.55rem;
+        font-size: 0.5rem;
       }
       
       .status-badge {
-        font-size: 0.55rem;
+        font-size: 0.5rem;
         padding: 2px 8px;
-        max-width: 80px;
+        max-width: 75px;
       }
       
       .token-btn {
-        font-size: 0.55rem;
+        font-size: 0.5rem;
         padding: 3px 8px;
-        max-width: 70px;
+        max-width: 65px;
       }
     }
     
@@ -424,34 +628,49 @@
       .token-card {
         width: 140px;
         height: 140px;
+        padding: 14px;
       }
       
       .token-name {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
         max-width: 90px;
         margin-bottom: 3px;
       }
       
+      .token-name.long-name {
+        font-size: 0.55rem;
+        max-width: 85px;
+      }
+      
       .token-id {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         padding: 2px 8px;
-        margin-bottom: 2px;
+        margin-bottom: 3px;
+      }
+      
+      .vendor-code-label {
+        font-size: 0.45rem;
+      }
+      
+      .vendor-code-value {
+        font-size: 0.5rem;
+        padding: 1px 5px;
       }
       
       .status-label {
-        font-size: 0.5rem;
+        font-size: 0.45rem;
       }
       
       .status-badge {
-        font-size: 0.5rem;
+        font-size: 0.45rem;
         padding: 2px 6px;
-        max-width: 70px;
+        max-width: 65px;
       }
       
       .token-btn {
-        font-size: 0.5rem;
+        font-size: 0.45rem;
         padding: 2px 6px;
-        max-width: 60px;
+        max-width: 55px;
       }
     }
     
@@ -587,6 +806,20 @@
 
   <!-- Toast -->
   <div id="toast" class="fixed bottom-4 right-4 hidden max-w-xs bg-slate-800 border border-slate-700 text-slate-100 text-sm rounded px-3 py-2 shadow"></div>
+
+  <!-- Token Details Modal -->
+  <div id="tokenDetailsModal" class="token-details-modal">
+    <div class="token-details-content">
+      <button id="tokenDetailsClose" class="token-details-close">&times;</button>
+      <div class="token-details-title" id="tokenDetailsTitle"></div>
+      <div class="token-details-id" id="tokenDetailsId"></div>
+      <div class="token-details-status">
+        <div class="token-details-status-label">Status:</div>
+        <div class="token-details-status-badge" id="tokenDetailsStatus"></div>
+      </div>
+      <div class="token-details-actions" id="tokenDetailsActions"></div>
+    </div>
+  </div>
 
 
   <script>
@@ -890,11 +1123,14 @@
           const tokenNumber = it.token?.number ?? '-';
           
           // Determine if shop name is long and needs special handling
-          const isLongName = shopName.length > 12;
+          const isLongName = shopName.length > 15;
           const nameClass = isLongName ? 'token-name long-name' : 'token-name';
           
+          // Check if text is truncated (needs clickable functionality)
+          const isTruncated = shopName.length > 12;
+          
           const card = document.createElement('div');
-          card.className = `token-card ${statusLabel.toLowerCase()}`;
+          card.className = `token-card ${statusLabel.toLowerCase()}${isTruncated ? ' clickable' : ''}`;
           
           // Add animation class for new cards
           setTimeout(() => {
@@ -906,6 +1142,10 @@
               <div class="${nameClass}">${shopName}</div>
               <div class="token-id">#${tokenNumber}</div>
             </div>
+            <div class="token-vendor-code">
+              <span class="vendor-code-label">Code:</span>
+              <span class="vendor-code-value">${it.vendorCode}</span>
+            </div>
             <div class="token-status">
               <span class="status-label">Status:</span>
               <span class="status-badge ${statusLabel.toLowerCase()}">${statusLabel}</span>
@@ -916,6 +1156,24 @@
           `;
           
           container.appendChild(card);
+          
+          // Add click handler for truncated tokens
+          if (isTruncated) {
+            card.addEventListener('click', (e) => {
+              // Don't trigger if clicking on the confirm button
+              if (e.target.closest('.token-btn')) return;
+              
+              showTokenDetails({
+                shopName: shopName,
+                tokenNumber: tokenNumber,
+                status: statusLabel,
+                canConfirm: canUserConfirm,
+                tokenId: it.token?._id,
+                vendorCode: it.vendorCode
+              });
+            });
+          }
+          
           const btn = card.querySelector('button.shop-confirm');
           if (btn && it.token?._id) {
             btn.addEventListener('click', async () => {
@@ -1107,6 +1365,91 @@
 
     // Ask for notification permission on load
     ensureNotifyPermission();
+
+    // Token Details Modal Functions
+    function showTokenDetails(tokenData) {
+      const modal = $('tokenDetailsModal');
+      const title = $('tokenDetailsTitle');
+      const id = $('tokenDetailsId');
+      const status = $('tokenDetailsStatus');
+      const actions = $('tokenDetailsActions');
+      
+      // Populate modal content
+      title.textContent = tokenData.shopName;
+      id.textContent = `#${tokenData.tokenNumber}`;
+      status.textContent = tokenData.status;
+      status.className = `token-details-status-badge ${tokenData.status.toLowerCase()}`;
+      
+      // Clear any existing vendor code elements to prevent duplicates
+      const existingVendorCodes = modal.querySelectorAll('.token-details-vendor-code');
+      existingVendorCodes.forEach(el => el.remove());
+      
+      // Add vendor code to modal if available
+      if (tokenData.vendorCode) {
+        const vendorCodeElement = document.createElement('div');
+        vendorCodeElement.className = 'token-details-vendor-code';
+        vendorCodeElement.innerHTML = `
+          <div class="token-details-status-label">Vendor Code:</div>
+          <div class="vendor-code-value" style="margin: 0 auto; display: inline-block;">${tokenData.vendorCode}</div>
+        `;
+        status.parentNode.insertBefore(vendorCodeElement, status.parentNode.lastElementChild);
+      }
+      
+      // Add action button if needed
+      if (tokenData.canConfirm && tokenData.tokenId) {
+        actions.innerHTML = `
+          <button class="token-details-btn" onclick="confirmTokenFromModal('${tokenData.tokenId}', '${tokenData.shopName}')">
+            Confirm Service
+          </button>
+        `;
+      } else {
+        actions.innerHTML = '';
+      }
+      
+      // Show modal
+      modal.classList.add('show');
+    }
+    
+    function hideTokenDetails() {
+      const modal = $('tokenDetailsModal');
+      modal.classList.remove('show');
+    }
+    
+    async function confirmTokenFromModal(tokenId, shopName) {
+      try {
+        await apiJson('/history/confirm', { 
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json' }, 
+          body: JSON.stringify({ tokenId: tokenId }) 
+        });
+        
+        // Add notification for successful confirmation
+        addNotifCard('Service Confirmed', `Your service at ${shopName} has been confirmed.`, true, tokenId, null, null);
+        
+        // Hide modal and refresh
+        hideTokenDetails();
+        await loadMyShops();
+        
+        toast('Service confirmed successfully!');
+      } catch (e) {
+        toast('Failed to confirm service');
+      }
+    }
+    
+    // Modal event handlers
+    $('tokenDetailsClose').addEventListener('click', hideTokenDetails);
+    $('tokenDetailsModal').addEventListener('click', (e) => {
+      if (e.target === $('tokenDetailsModal')) {
+        hideTokenDetails();
+      }
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && $('tokenDetailsModal').classList.contains('show')) {
+        hideTokenDetails();
+      }
+    });
 
     $('notifClear').addEventListener('click', () => {
       // Clear all notifications from localStorage and UI
