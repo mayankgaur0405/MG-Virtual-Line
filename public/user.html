@@ -10,6 +10,371 @@
   <link rel="icon" href="data:," />
   <style>
     .card{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+    
+    /* Token Card Styles - Circular Design */
+    .token-card {
+      background: linear-gradient(145deg, #1e293b, #334155);
+      border: 2px solid #475569;
+      border-radius: 50%;
+      width: 200px;
+      height: 200px;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 
+        0 8px 16px -4px rgba(0, 0, 0, 0.2),
+        0 4px 8px -2px rgba(0, 0, 0, 0.1),
+        inset 0 2px 4px rgba(255, 255, 255, 0.1),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      margin: 0 auto;
+    }
+    
+    .token-card::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+      opacity: 0.1;
+      z-index: 1;
+    }
+    
+    .token-card::after {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+      z-index: 2;
+    }
+    
+    .token-card:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 
+        0 12px 24px -4px rgba(0, 0, 0, 0.3),
+        0 8px 16px -4px rgba(0, 0, 0, 0.2),
+        inset 0 2px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+      border-color: #64748b;
+    }
+    
+    .token-card.animate-in {
+      animation: tokenSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    @keyframes tokenSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.8) rotate(-10deg);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+    }
+    
+    .token-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+      z-index: 3;
+      position: relative;
+      flex: 0 0 auto;
+    }
+    
+    .token-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: -0.025em;
+      margin-bottom: 6px;
+      text-align: center;
+      line-height: 1.1;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding: 0 4px;
+      word-break: break-word;
+    }
+    
+    /* Special handling for very long shop names */
+    .token-name.long-name {
+      font-size: 0.7rem;
+      line-height: 1.0;
+      max-width: 110px;
+      white-space: normal;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-height: 1.4em;
+    }
+    
+    .token-id {
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      z-index: 3;
+      position: relative;
+      margin-bottom: 4px;
+    }
+    
+    .token-status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 6px;
+      z-index: 3;
+      position: relative;
+      flex: 0 0 auto;
+    }
+    
+    .status-label {
+      color: #cbd5e1;
+      font-size: 0.6rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .status-badge {
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      position: relative;
+      overflow: hidden;
+      max-width: 100px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    
+    .status-badge.pending {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+      animation: pulse 2s infinite;
+    }
+    
+    .status-badge.created {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+    
+    .status-badge.completed {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+      color: white;
+      box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+      }
+    }
+    
+    .token-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 2px;
+      z-index: 3;
+      position: relative;
+      flex: 0 0 auto;
+    }
+    
+    .token-btn {
+      padding: 4px 10px;
+      border-radius: 16px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      max-width: 90px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    
+    .token-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .token-btn:hover::before {
+      left: 100%;
+    }
+    
+    .token-btn.confirm {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    }
+    
+    .token-btn.confirm:hover {
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+    }
+    
+    .token-card.pending {
+      animation: tokenGlow 3s ease-in-out infinite;
+    }
+    
+    @keyframes tokenGlow {
+      0%, 100% {
+        box-shadow: 
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+      50% {
+        box-shadow: 
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1),
+          0 0 20px rgba(245, 158, 11, 0.1);
+      }
+    }
+    
+    .token-card.completed {
+      opacity: 0.7;
+      transform: scale(0.98);
+    }
+    
+    .token-card.completed:hover {
+      opacity: 1;
+      transform: scale(1);
+    }
+    
+    /* Additional visual enhancements */
+    .token-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .token-card:hover::after {
+      opacity: 1;
+    }
+    
+    .token-card.pending::after {
+      background: linear-gradient(45deg, transparent 30%, rgba(245, 158, 11, 0.1) 50%, transparent 70%);
+      animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    
+    /* Status transition animations */
+    .status-badge {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .status-badge.status-changing {
+      animation: statusChange 0.6s ease-in-out;
+    }
+    
+    @keyframes statusChange {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    /* Token number highlight */
+    .token-id {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .token-id::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.6s;
+    }
+    
+    .token-card:hover .token-id::before {
+      left: 100%;
+    }
+    
+    /* Loading state for buttons */
+    .token-btn.loading {
+      position: relative;
+      color: transparent;
+    }
+    
+    .token-btn.loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 16px;
+      height: 16px;
+      margin: -8px 0 0 -8px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
     /* Mobile optimizations */
     @media (max-width: 768px) {
       .max-w-5xl { max-width: 100%; }
@@ -20,7 +385,76 @@
       .text-3xl { font-size: 1.875rem; }
       .py-3 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
       .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+      
+      .token-card {
+        width: 160px;
+        height: 160px;
+      }
+      
+      .token-name {
+        font-size: 0.7rem;
+        max-width: 100px;
+        margin-bottom: 4px;
+      }
+      
+      .token-id {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        margin-bottom: 3px;
+      }
+      
+      .status-label {
+        font-size: 0.55rem;
+      }
+      
+      .status-badge {
+        font-size: 0.55rem;
+        padding: 2px 8px;
+        max-width: 80px;
+      }
+      
+      .token-btn {
+        font-size: 0.55rem;
+        padding: 3px 8px;
+        max-width: 70px;
+      }
     }
+    
+    @media (max-width: 480px) {
+      .token-card {
+        width: 140px;
+        height: 140px;
+      }
+      
+      .token-name {
+        font-size: 0.65rem;
+        max-width: 90px;
+        margin-bottom: 3px;
+      }
+      
+      .token-id {
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        margin-bottom: 2px;
+      }
+      
+      .status-label {
+        font-size: 0.5rem;
+      }
+      
+      .status-badge {
+        font-size: 0.5rem;
+        padding: 2px 6px;
+        max-width: 70px;
+      }
+      
+      .token-btn {
+        font-size: 0.5rem;
+        padding: 2px 6px;
+        max-width: 60px;
+      }
+    }
+    
     /* Prevent zoom on input focus */
     input, select, textarea { font-size: 16px; }
   </style>
@@ -104,10 +538,10 @@
     <!-- Multi-shop cards -->
     <section class="card bg-slate-800 border border-slate-700 rounded-lg p-4">
       <div class="flex items-center justify-between mb-2">
-        <h3 class="font-semibold">Your Shops</h3>
+        <h3 class="font-semibold">Your Tokens</h3>
         <div class="text-xs text-slate-400">Auto-updating</div>
       </div>
-      <div id="shopCards" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      <div id="shopCards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center"></div>
     </section>
 
     <!-- QR Scanner Modal -->
@@ -451,35 +885,80 @@
           socket.emit('join_vendor', it.vendorCode);
           const rec = it.token?._id ? historyByTokenId.get(String(it.token._id)) : null;
           const statusLabel = rec?.status ? rec.status : (it.token?.status === 'waiting' ? 'Pending' : (it.token?.status === 'served' ? 'Created' : (it.token?.status || '-')));
-          const badge = statusLabel==='Created'?'bg-amber-600':(statusLabel==='Pending'?'bg-slate-600':'bg-emerald-600');
           const canUserConfirm = !!rec && rec.status !== 'Completed' && !rec.userConfirmed;
           const shopName = it.vendorName || it.vendorCode;
+          const tokenNumber = it.token?.number ?? '-';
+          
+          // Determine if shop name is long and needs special handling
+          const isLongName = shopName.length > 12;
+          const nameClass = isLongName ? 'token-name long-name' : 'token-name';
+          
           const card = document.createElement('div');
-          card.className = 'rounded border border-slate-700 p-3 bg-slate-900';
+          card.className = `token-card ${statusLabel.toLowerCase()}`;
+          
+          // Add animation class for new cards
+          setTimeout(() => {
+            card.classList.add('animate-in');
+          }, 100);
+          
           card.innerHTML = `
-            <div class="flex items-center justify-between">
-              <div class="font-medium">${shopName}</div>
-              <div class="text-xs text-slate-400">#${it.token?.number ?? '-'}</div>
+            <div class="token-header">
+              <div class="${nameClass}">${shopName}</div>
+              <div class="token-id">#${tokenNumber}</div>
             </div>
-            <div class="text-sm mt-1">Status: <span class="px-2 py-0.5 rounded text-xs ${badge}">${statusLabel}</span></div>
-            <div class="mt-2">
-              ${canUserConfirm ? `<button class=\"shop-confirm text-xs px-2 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white\" data-id=\"${it.token?._id || ''}\">Confirm</button>` : ''}
+            <div class="token-status">
+              <span class="status-label">Status:</span>
+              <span class="status-badge ${statusLabel.toLowerCase()}">${statusLabel}</span>
+            </div>
+            <div class="token-actions">
+              ${canUserConfirm ? `<button class="token-btn confirm shop-confirm" data-id="${it.token?._id || ''}">Confirm</button>` : ''}
             </div>
           `;
+          
           container.appendChild(card);
           const btn = card.querySelector('button.shop-confirm');
           if (btn && it.token?._id) {
             btn.addEventListener('click', async () => {
               try {
+                // Add loading state with animation
+                btn.classList.add('loading');
+                btn.disabled = true;
+                
                 await apiJson('/history/confirm', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tokenId: it.token._id }) });
+                
+                // Remove loading state and add success animation
+                btn.classList.remove('loading');
+                btn.textContent = 'Confirmed!';
+                btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                btn.style.color = 'white';
+                
+                // Add status change animation to the badge
+                const statusBadge = card.querySelector('.status-badge');
+                if (statusBadge) {
+                  statusBadge.classList.add('status-changing');
+                  setTimeout(() => {
+                    statusBadge.classList.remove('status-changing');
+                  }, 600);
+                }
+                
                 // Add notification for successful confirmation
                 addNotifCard('Service Confirmed', `Your service at ${shopName} has been confirmed.`, true, it.token._id, it.token.number, it.vendorCode);
+                
                 // Clear all notifications for this token since it's now completed
                 setTimeout(() => {
                   clearNotificationsForToken(it.token._id);
                 }, 2000);
-                await loadMyShops();
-              } catch (e) { alert('Confirm failed'); }
+                
+                // Refresh the shop cards after a short delay
+                setTimeout(async () => {
+                  await loadMyShops();
+                }, 1500);
+              } catch (e) { 
+                btn.classList.remove('loading');
+                btn.textContent = 'Try Again';
+                btn.disabled = false;
+                alert('Confirm failed'); 
+              }
             });
           }
         }

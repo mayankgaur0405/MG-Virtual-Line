@@ -11,6 +11,17 @@
     .shine { position: relative; overflow: hidden; }
     .shine::after { content: ""; position: absolute; inset: -200% -50% auto; width: 200%; height: 200%; transform: rotate(25deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent); animation: shine 3s linear infinite; }
     @keyframes shine { 0% { transform: translateX(-100%) rotate(25deg);} 100% { transform: translateX(100%) rotate(25deg);} }
+    
+    /* Role selection error styling */
+    .role-error {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 0 1px #ef4444 !important;
+    }
+    
+    .role-error:focus {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+    }
     /* Mobile optimizations */
     @media (max-width: 768px) {
       .max-w-6xl { max-width: 100%; }
@@ -102,7 +113,8 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <input id="authEmail" class="border border-slate-700 bg-slate-900 rounded px-3 py-2" placeholder="Email" />
         <input id="authPassword" type="password" class="border border-slate-700 bg-slate-900 rounded px-3 py-2" placeholder="Password" />
-        <select id="authRole" class="border border-slate-700 bg-slate-900 rounded px-3 py-2">
+        <select id="authRole" class="border border-slate-700 bg-slate-900 rounded px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+          <option value="">Select Role</option>
           <option value="user">User</option>
           <option value="admin">Admin</option>
         </select>
@@ -111,7 +123,7 @@
         <button id="loginBtn" class="py-2 rounded bg-indigo-600 hover:bg-indigo-500 text-white">Login</button>
         <button id="signupBtn" class="py-2 rounded bg-slate-700 hover:bg-slate-600 text-white">Signup</button>
       </div>
-      <p class="text-xs text-slate-400 mt-2">Choose role and continue. You’ll be redirected to your dashboard.</p>
+      <p class="text-xs text-slate-400 mt-2">Select your role (User/Admin) and login. You'll be redirected to your dashboard.</p>
     </section>
 
   </div>
@@ -134,12 +146,42 @@
     }
 
     const on = (id, evt, fn) => { const el = $(id); if (el) el.addEventListener(evt, fn); };
+    
+    // Clear error styling when user changes role selection
+    on('authRole', 'change', () => {
+      $('authRole').classList.remove('role-error');
+    });
 
     on('loginBtn', 'click', async () => {
       const email = $('authEmail').value.trim();
       const password = $('authPassword').value;
+      const selectedRole = $('authRole').value;
+      
+      if (!email || !password || !selectedRole) {
+        alert('Please enter email, password, and select a role');
+        return;
+      }
+      
       try {
         const data = await apiJson('/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+        
+        // Check if the user's actual role matches the selected role
+        if (data.user.role !== selectedRole) {
+          const roleText = data.user.role === 'admin' ? 'Admin' : 'User';
+          
+          // Add visual error styling to the role dropdown
+          const roleSelect = $('authRole');
+          roleSelect.classList.add('role-error');
+          
+          // Remove error styling after 3 seconds
+          setTimeout(() => {
+            roleSelect.classList.remove('role-error');
+          }, 3000);
+          
+          alert(`Role mismatch! You are registered as a ${roleText}. Please select "${roleText}" from the dropdown to login.`);
+          return;
+        }
+        
         const redirect = data.user.role === 'admin' ? '/admin.html' : `/user.html${vendorFromUrl ? ('?vendor=' + encodeURIComponent(vendorFromUrl)) : ''}`;
         location.href = redirect;
       } catch (e) { alert(e.message); }
